@@ -2,18 +2,16 @@ package com.vgmsistemas.vgminterface.service.unilever;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.vgmsistemas.vgminterface.entity.Cliente;
+import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
 import com.vgmsistemas.vgminterface.repository.CanalProvRubroRepo;
+import com.vgmsistemas.vgminterface.repository.ParametroInterfaceRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.CuentaClienteRepo;
-import com.vgmsistemas.vgminterface.restController.unilever.CuentaClienteRestController;
 import com.vgmsistemas.vgminterface.service.ClienteService;
+import com.vgmsistemas.vgminterface.servicesrest.CuentaClienteWs;
 
 @Service
 public class CuentaClienteService {
@@ -26,7 +24,9 @@ public class CuentaClienteService {
 	
 	@Autowired
 	CanalProvRubroRepo canalProvRubroRepo;
-
+	
+	@Autowired
+	ParametroInterfaceRepo parametroInterfaceRepo;
 	//private static Logger LOG = LoggerFactory.getLogger(CuentaClienteRestController.class)	;
 	
 	public CuentaCliente tratarCuenta(CuentaCliente ctacliente) throws Exception {
@@ -117,6 +117,20 @@ public class CuentaClienteService {
 		 
 	     return cuentaCliente;
 	}
+	
+	public Integer enviar(Integer id) throws Exception {
+		CuentaClienteWs cuentaClienteWs = new CuentaClienteWs();
+				
+		// Optengo los parametros de la interface
+		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		
+		// Recupero la cuenta cliente
+		Optional<CuentaCliente> cuentaCliente = cuentaClienteRepo.findById(id);
+		
+		// Envio al Web Service
+	    return cuentaClienteWs.callWebService(cuentaCliente, param);
+	}
+	
 	public List<CuentaCliente> leerTodos() throws Exception {
 		List<CuentaCliente> clientes = cuentaClienteRepo.findAll();
 		

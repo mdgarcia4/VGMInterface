@@ -1,13 +1,10 @@
 package com.vgmsistemas.vgminterface.restController.unilever;
 
 import java.util.List;
-
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
 import com.vgmsistemas.vgminterface.service.unilever.CuentaClienteService;
 import com.vgmsistemas.vgminterface.util.RutasServicios;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,4 +61,5 @@ public class CuentaClienteRestController {
 		return cuentaClienteService.leerTodos();
 		
 	}
+	
 }
