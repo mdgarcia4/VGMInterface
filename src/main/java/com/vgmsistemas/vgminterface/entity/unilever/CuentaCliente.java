@@ -7,9 +7,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 @Entity
 @Table( name = "cuenta_cliente" )
+@JsonPropertyOrder({ "distributor_code", "property_name", "store_id_ERP", "Store_Status",
+	"rejection_reason","erp_seller","cuit_dni_id","document_type_id","ingresos_brutos","customer_type",
+	"street","number","Neighborhood","District","Province","country","postal_code","phone_number",
+	"mobile_number","email","firstname","surname","customer_credit_available",
+	"customer_total_credit","customer_pending_payment"})
 public class CuentaCliente{
 	
 	@Id
@@ -17,60 +25,79 @@ public class CuentaCliente{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "id_codigo_distribuidor")
 	private String distributor_code;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_cuenta_cliente")
 	private String property_name;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "id_cuit_dni")
 	private String cuit_dni_id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "ti_documento")
 	private String document_type_id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "id_ingresos_brutos")
 	private String ingresos_brutos;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_canal_prov")
 	private String customer_type;
-		
+	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_calle")
 	private String street;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nu_calle")
 	private String number;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_barrio")
 	private String Neighborhood;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_departamento")
 	private String District;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_provincia")
 	private String Province;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_pais")
 	private String country;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "cd_postal_nvo")
 	private String postal_code;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nu_telefono")
 	private String phone_number;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nu_celular")
 	private String mobile_number;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_email")
 	private String email;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_nombre_representante")
 	private String firstname;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "de_apellido_representante")
 	private String surname;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "id_cliente_tienda")
 	private String store_id_ERP;
 	
@@ -83,20 +110,29 @@ public class CuentaCliente{
 	@Column(name = "id_comercio")
 	private Long idComercio;
 	
+	@JsonView(Views.Response.class)
 	@Column(name = "id_estado")
-	private Integer store_Status;
+	private String Store_Status;
 	
+	@JsonView(Views.Response.class)
 	@Column(name = "de_motivo_rechazo")
 	private String rejection_reason;
 	
+	@JsonView(Views.Request.class)
 	@Column(name = "pr_credito_disponible")
-	private Float customer_credit_available;
+	private Float customer_credit_available = (float) 0.0;
 	
+	@JsonView(Views.Request.class)
 	@Column(name = "pr_credito_total")
-	private Float customer_total_credit;
+	private Float customer_total_credit= (float) 0.0;
 	
+	@JsonView(Views.Request.class)
 	@Column(name = "pr_monto_adeudado")
-	private Float customer_pending_payment;
+	private Float customer_pending_payment= (float) 0.0;
+	
+	@JsonView(Views.Request.class)
+	@Column(name = "id_vendedor")
+	private Integer erp_seller;
 	
 	@Column(name = "sn_enviado")
 	private char sn_enviado;
@@ -173,6 +209,30 @@ public class CuentaCliente{
 		this.number = number;
 	}
 
+	public String getNeighborhood() {
+		return Neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		Neighborhood = neighborhood;
+	}
+
+	public String getDistrict() {
+		return District;
+	}
+
+	public void setDistrict(String district) {
+		District = district;
+	}
+
+	public String getProvince() {
+		return Province;
+	}
+
+	public void setProvince(String province) {
+		Province = province;
+	}
+
 	public String getCountry() {
 		return country;
 	}
@@ -237,7 +297,6 @@ public class CuentaCliente{
 		this.store_id_ERP = store_id_ERP;
 	}
 
-	
 	public Long getIdSucursal() {
 		return idSucursal;
 	}
@@ -260,6 +319,14 @@ public class CuentaCliente{
 
 	public void setIdComercio(Long idComercio) {
 		this.idComercio = idComercio;
+	}
+
+	public String getStore_Status() {
+		return Store_Status;
+	}
+
+	public void setStore_Status(String store_Status) {
+		Store_Status = store_Status;
 	}
 
 	public String getRejection_reason() {
@@ -294,12 +361,12 @@ public class CuentaCliente{
 		this.customer_pending_payment = customer_pending_payment;
 	}
 
-	public Integer getStore_Status() {
-		return store_Status;
+	public Integer getErp_seller() {
+		return erp_seller;
 	}
 
-	public void setStore_Status(Integer store_Status) {
-		this.store_Status = store_Status;
+	public void setErp_seller(Integer erp_seller) {
+		this.erp_seller = erp_seller;
 	}
 
 	public char getSn_enviado() {
@@ -310,29 +377,6 @@ public class CuentaCliente{
 		this.sn_enviado = sn_enviado;
 	}
 
-	public String getNeighborhood() {
-		return Neighborhood;
-	}
-
-	public void setNeighborhood(String neighborhood) {
-		Neighborhood = neighborhood;
-	}
-
-	public String getDistrict() {
-		return District;
-	}
-
-	public void setDistrict(String district) {
-		District = district;
-	}
-
-	public String getProvince() {
-		return Province;
-	}
-
-	public void setProvince(String province) {
-		Province = province;
-	}
-	
+		
 	
 }

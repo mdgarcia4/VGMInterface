@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.vgmsistemas.vgminterface.entity.CanalProvRubro;
 import com.vgmsistemas.vgminterface.entity.Cliente;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
@@ -49,26 +51,31 @@ public class CuentaClienteService {
 	
 		
 	public CuentaCliente crear(CuentaCliente ctacliente) throws Exception {
+		String vacio= "";
 		// Primero busco el cliente si existe para hacer match y asigno los campos
 		Optional<Cliente> cliente = clienteService.findCliente(ctacliente);
+		// Optengo los parametros de la interface
+		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
 		
 		ctacliente.setSn_enviado('N');
-		
+		ctacliente.setStore_Status(vacio);
+		ctacliente.setRejection_reason(vacio);
 		if (cliente.isPresent()) {
 			
 			ctacliente.setStore_id_ERP(cliente.get().getId().toString());
 			ctacliente.setIdSucursal(cliente.get().getId().getIdSucursal());
 			ctacliente.setIdCliente(cliente.get().getId().getIdCliente());
 			ctacliente.setIdComercio(cliente.get().getId().getIdComercio());
-			ctacliente.setStore_Status(1);
+			ctacliente.setErp_seller(cliente.get().getIdVendedor());
+			ctacliente.setStore_Status("1");
 			ctacliente.setSn_enviado('S');
 			
 		    // Trato el rubro
-			/*Integer rubro = cliente.get().getIdRubroCliente();
-			Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( 68, rubro);
+			Integer rubro = cliente.get().getIdRubroCliente();
+			Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( (int) param.get().getIdProveedor(), rubro);
 			if (canal.isPresent()) {
-				idCanalProv = canal.get().getId().getIdCanalProv();
-			}*/
+				ctacliente.setCustomer_type(String.valueOf(canal.get().getId().getIdCanalProv())); ;
+			}
 			
 		}
 		// Grabo el cliente y devuelvo el resultado
@@ -100,6 +107,7 @@ public class CuentaClienteService {
 		cuentaCliente.setEmail(ctacliente.getEmail());
 		cuentaCliente.setFirstname(ctacliente.getFirstname());
 		cuentaCliente.setSurname(ctacliente.getSurname());
+		
 		
 		// Grabo las modificaciones cliente y devuelvo el resultado
 		try {

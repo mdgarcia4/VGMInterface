@@ -1,8 +1,11 @@
 package com.vgmsistemas.vgminterface.restController.unilever;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gson.Gson;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
+import com.vgmsistemas.vgminterface.entity.unilever.Views;
 import com.vgmsistemas.vgminterface.service.unilever.CuentaClienteService;
 import com.vgmsistemas.vgminterface.util.RutasServicios;
 import org.json.JSONObject;
@@ -39,6 +42,7 @@ public class CuentaClienteRestController {
 	}*/
 	
 	@PostMapping()
+	@JsonView(Views.Response.class)
 	public CuentaCliente createCuentaCliente(@RequestBody String clieString) throws Exception {
 		Gson gson = new Gson();
 		JSONObject jsonClie = new JSONObject(clieString);

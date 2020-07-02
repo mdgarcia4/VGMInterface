@@ -25,6 +25,8 @@ public class Proveedor {
 	private String nuCuit;
 	@Column(name = "sn_web")
 	private String snWeb;
+	@Column(name="id_cliente_prov")
+	private Long idClienteProv;
 	
 	public Long getIdProveedor() {
 		return idProveedor;
@@ -67,6 +69,12 @@ public class Proveedor {
 	}
 	public void setSnWeb(String snWeb) {
 		this.snWeb = snWeb;
+	}
+	public Long getIdClienteProv() {
+		return idClienteProv;
+	}
+	public void setIdClienteProv(Long idClienteProv) {
+		this.idClienteProv = idClienteProv;
 	}
 	
 }
