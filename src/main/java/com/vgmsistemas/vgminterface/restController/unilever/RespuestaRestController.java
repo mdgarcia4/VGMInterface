@@ -32,12 +32,15 @@ public class RespuestaRestController {
 		Respuesta respuesta = gson.fromJson(jsonProd.toString(), Respuesta.class);
 		
 		try {
+			LOG.info("RespuestaRestController createRespuesta() - Antes de crear la Respuesta de Productos" );
+			LOG.info("Json: " + respuestaString );
 			respuestaService.crear(respuesta, "PRODUCTOS");
+			LOG.info("RespuestaRestController createRespuesta() - Creó correctamente la Respuesta de Productos" );
 			return 1;
 		}
 		catch (Exception e) { 
-			LOG.error(e.getMessage());
-			return 0;
+			LOG.error("RespuestaRestController createRespuesta()" + e.getMessage());
+			throw e;
 		}
 		
 	}

@@ -59,6 +59,9 @@ public class ListaPrecio implements Serializable{
 	
 	@Column(name = "fh_vencimiento")
 	private Calendar fhVencimiento;
+	
+	@Column(name = "ti_lista_interface")
+	private String  tiListaInterface;
 
 	public static final int LISTA_BASE = 1;
 	public static final int LISTA_PROMOCION = 3;
@@ -214,4 +217,12 @@ public class ListaPrecio implements Serializable{
 	public void setFhVencimiento(Calendar fhVencimiento) {
 		this.fhVencimiento = fhVencimiento;
 	}
+	public String getTiListaInterface() {
+		return tiListaInterface;
+	}
+	public void setTiListaInterface(String tiListaInterface) {
+		this.tiListaInterface = tiListaInterface;
+	}
+	
+	
 }

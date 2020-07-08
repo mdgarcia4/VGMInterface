@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -119,18 +120,22 @@ public class CuentaCliente{
 	private String rejection_reason;
 	
 	@JsonView(Views.Request.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_credito_disponible")
 	private Float customer_credit_available = (float) 0.0;
 	
 	@JsonView(Views.Request.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_credito_total")
 	private Float customer_total_credit= (float) 0.0;
 	
 	@JsonView(Views.Request.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_monto_adeudado")
 	private Float customer_pending_payment= (float) 0.0;
 	
 	@JsonView(Views.Request.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "id_vendedor")
 	private Integer erp_seller;
 	

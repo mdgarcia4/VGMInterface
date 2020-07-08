@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,14 +29,23 @@ public class InternosRestController {
 	
 	@JsonView(Views.Request.class)
 	@RequestMapping(value = RutasServicios.ENVIAR_ESTADO_CUENTA_CLIENTE, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Integer enviarEstadoCuentaCliente(@RequestParam Integer id) throws Exception {
+	public Integer enviarEstadoCuentaCliente(@RequestParam (required = false) Integer id) throws Exception {
 		try {
+			Integer i;
 			// Primero Obtengo la info
-			return cuentaClienteService.enviar(id);
+			LOG.info("Se envia el retailer Nro: " + id);
+			
+			if (id==null) {
+				i = cuentaClienteService.enviar();
+			} else {
+				i = cuentaClienteService.enviar(id);
+			}
+			
+			return i;
 		}
 		catch (Exception e) { 
-			LOG.error(e.getMessage());
-			return -1;
+			LOG.error("InternosRestController enviarEstdoCuentaCliente(). Error: " + e.getMessage());
+			throw e;
 		}
 		
 	}
@@ -47,8 +57,8 @@ public class InternosRestController {
 			return productsService.enviar();
 		}
 		catch (Exception e) { 
-			LOG.error(e.getMessage());
-			return -1;
+			LOG.error("InternosRestController enviarProductos(). Error: " + e.getMessage());
+			throw e;
 		}
 		
 	}

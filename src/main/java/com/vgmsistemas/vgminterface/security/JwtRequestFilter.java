@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.vgmsistemas.vgminterface.service.JwtUserDetailsService;
+import com.vgmsistemas.vgminterface.service.unilever.CuentaClienteService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
@@ -27,15 +30,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+	
+	private static Logger LOG =  LoggerFactory.getLogger(JwtRequestFilter.class)	;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
 
-		String requestTokenHeader; /*= request.getHeader("Authorization");
+		String requestTokenHeader; 
 		
+		LOG.info("X-Auth-Token: " + request.getHeader("X-Auth-Token"));
+		
+		/*= request.getHeader("Authorization");
 		if (requestTokenHeader == null) {*/
 			requestTokenHeader = request.getHeader("X-Auth-Token");
+			LOG.info("X-Auth-Token: " + requestTokenHeader);
 		/*}*/
 		
 		String username = null;
@@ -52,12 +61,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 			} catch (IllegalArgumentException e) {
-				System.out.println("No se puede obtener el token");
+				//System.out.println("No se puede obtener el token");
+				LOG.error("No se puede obtener X-Auth-Token. " + e.getMessage());
 			} catch (ExpiredJwtException e) {
-				System.out.println("El token expiró");
+				//System.out.println("El token expiró");
+				LOG.error("El Token expiró " + e.getMessage());
 			}
 		} else {
-			logger.warn("El token no se encuentra");
+			//logger.warn("El token no se encuentra");
+			LOG.warn("El header X-Auth-Token no existe " );
 		}
 
 		// Once we get the token validate it.

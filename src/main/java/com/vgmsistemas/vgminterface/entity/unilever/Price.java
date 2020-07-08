@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Table( name = "articulos")
-public class Product{
+@Table( name = "v_precios")
+public class Price{
 
 	@Id
 	@Column(name = "id_articulos")	

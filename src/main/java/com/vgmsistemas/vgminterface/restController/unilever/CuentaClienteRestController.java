@@ -49,19 +49,22 @@ public class CuentaClienteRestController {
 		CuentaCliente cuentaCliente = gson.fromJson(jsonClie.toString(), CuentaCliente.class);
 		
 		try {
+			LOG.info("CuentaCliente createCuentaCliente() . Antes de llamar a tratarCuenta(cuentaCliente)" );
+			LOG.info("Json: " + clieString);
 			CuentaCliente ctaclie = cuentaClienteService.tratarCuenta(cuentaCliente);
+			LOG.info("CuentaCliente createCuentaCliente() . Proceso OK al volver de tratarCuenta(cuentaCliente)" );
 			return ctaclie;
 		}
 		catch (Exception e) { 
-			LOG.error(e.getMessage());
-			return null;
+			LOG.error("CuentaCliente createCuentaCliente() . " + e.getMessage());
+			throw e;
 		}
 		
 	}
 	
 	@GetMapping()
 	public List<CuentaCliente> leerCuentaCliente() throws Exception {
-				
+		LOG.info("CuentaCliente leerCuentaCliente() . Antes de llamar a leerCuentaCliente(cuentaCliente)" );		
 		return cuentaClienteService.leerTodos();
 		
 	}

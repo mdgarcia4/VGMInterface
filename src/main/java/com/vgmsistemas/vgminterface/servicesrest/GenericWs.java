@@ -62,7 +62,7 @@ public abstract class GenericWs {
 	    	  	
 			} catch (Exception ex) {
 				ex.getStackTrace();
-				return "-1";
+				throw ex;
 			}
 	      
  	     return "0";
