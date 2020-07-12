@@ -19,8 +19,8 @@ import com.vgmsistemas.vgminterface.util.RutasServicios;
 @PreAuthorize("authenticated")
 @RestController
 @RequestMapping(RutasServicios.PRODUCTOS_RESPUESTA)
-public class RespuestaRestController {
-	private static Logger LOG = LoggerFactory.getLogger(RespuestaRestController.class)	;
+public class ProductosRespRestController {
+	private static Logger LOG = LoggerFactory.getLogger(ProductosRespRestController.class)	;
 	
 	@Autowired
 	RespuestaService respuestaService;
@@ -28,8 +28,8 @@ public class RespuestaRestController {
 	@PostMapping()
 	public Integer createRespuesta(@RequestBody String respuestaString) throws Exception {
 		Gson gson = new Gson();
-		JSONObject jsonProd = new JSONObject(respuestaString);
-		Respuesta respuesta = gson.fromJson(jsonProd.toString(), Respuesta.class);
+		JSONObject jsonPrecio = new JSONObject(respuestaString);
+		Respuesta respuesta = gson.fromJson(jsonPrecio.toString(), Respuesta.class);
 		
 		try {
 			LOG.info("RespuestaRestController createRespuesta() - Antes de crear la Respuesta de Productos" );

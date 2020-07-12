@@ -4,13 +4,12 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
 import com.vgmsistemas.vgminterface.entity.unilever.Views;
-import com.vgmsistemas.vgminterface.service.unilever.CuentaClienteService;
+
 
 public class CuentaClienteWs extends GenericWs{
 	private static Logger LOG =  LoggerFactory.getLogger(CuentaClienteWs.class)	;

@@ -1,72 +1,96 @@
 
 package com.vgmsistemas.vgminterface.entity.unilever;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Table( name = "v_precios")
+@JsonPropertyOrder({ "store_id_ERP","price","special_price","special_price_start_date","special_price_end_date",
+	"discount_value","discount_type","quantity_min_product","quantity_max_product","valid_week_day","retailer_group"})
+@Table( name = "v_precios_interface")
 public class Price{
 
+	
 	@Id
-	@Column(name = "id_articulos")	
-	private Long id;
+	private PkPrice id;
+	
 	
 	@Column(name="id_codigobarras")
 	private String EAN;
 	
-	@Column(name = "de_extra" )
-	private String name_prod;
+	@Column(name = "id_proveedor" )
+	private Integer idProveedor;
 	
-	@Column(name = "sn_activo")
-	private String snActivo;
-	
-	@Transient
-	private String status_prod;
-	
-	@Column(name="ca_unidxean")
+	@JsonView(Views.Precio.class)
+	@Column(name = "price")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private Integer qty_ean_unit;
+	private Float price;
 	
-	@Column(name="ca_unid_min_venta")
+	@JsonView(Views.Precio.class)
+	@Column(name = "special_price")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private Integer qty_min_sell;
+	private Float special_price;
 	
-	@Transient
-	private String industry_name;
-	
-	@Column(name = "id_art_proveedor")
-	private String industry_code;
-	
-	@Column(name = "de_articulos" )
-	private String short_description;
-	
-	@Column(name = "pr_arcor_a")
+	@JsonView(Views.Precio.class)
+	@Column(name = "special_price_start_date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private Float default_price;
+	private Date special_price_start_date;
 	
-	@Transient
-	private String brand;
+	@JsonView(Views.Precio.class)
+	@Column(name = "special_price_end_date")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Date special_price_end_date;
 	
-	@Column(name = "id_linea")
-	private Long idMarca;
+	@JsonView(Views.Precio.class)
+	@Column(name="discount_value")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Float discount_value;
 	
-	@Column(name = "id_proveedor")
-	private Long idProveedor;
+	@JsonView(Views.Precio.class)
+	@Column(name="discount_type")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Integer discount_type;
 	
+	@JsonView(Views.Precio.class)
+	@Column(name="quantity_min_product")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Integer quantity_min_product;
 	
-
-	public Long getId() {
+	@JsonView(Views.Precio.class)
+	@Column(name="quantity_max_product")
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Integer quantity_max_product;
+	
+	@JsonView(Views.Precio.class)
+	@Column(name="valid_week_day")
+	private String valid_week_day;
+	
+	@JsonView(Views.Precio.class)
+	@Column(name="retailer_group")
+	private String retailer_group;
+	
+	/*@ManyToOne
+    @JoinColumn(name = "id_articulos" , insertable = false, updatable = false)*/
+	
+	@ManyToOne()
+	@JoinColumn(name = "id_articulos", referencedColumnName= "id_articulos", insertable = false, updatable = false)
+	    private Product product;
+	
+	public PkPrice getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(PkPrice id) {
 		this.id = id;
 	}
 
@@ -78,115 +102,103 @@ public class Price{
 		EAN = eAN;
 	}
 
-	public String getName_prod() {
-		return name_prod;
-	}
-
-	public void setName_prod(String name_prod) {
-		this.name_prod = name_prod;
-	}
-
-	public String getSnActivo() {
-		return snActivo;
-	}
-
-	public void setSnActivo(String snActivo) {
-		this.snActivo = snActivo;
-	}
-
-	public String getStatus_prod() {
-		if (snActivo.equals("N")) {
-			status_prod = "0";
-			
-		} else {
-			status_prod = "1";
-		}
-		return status_prod;
-	}
-
-	public void setStatus_prod(String status_prod) {
-		
-		if (status_prod.equals("1")) {
-			this.snActivo = "S";
-			
-		} else {
-			this.snActivo= "N";
-		}
-		this.status_prod = status_prod;
-	}
-
-	public Integer getQty_ean_unit() {
-		return qty_ean_unit;
-	}
-
-	public void setQty_ean_unit(Integer qty_ean_unit) {
-		this.qty_ean_unit = qty_ean_unit;
-	}
-
-	public Integer getQty_min_sell() {
-		return qty_min_sell;
-	}
-
-	public void setQty_min_sell(Integer qty_min_sell) {
-		this.qty_min_sell = qty_min_sell;
-	}
-
-	public String getIndustry_name() {
-		return industry_name;
-	}
-
-	public void setIndustry_name(String industry_name) {
-		this.industry_name = industry_name;
-	}
-
-	public String getIndustry_code() {
-		return industry_code;
-	}
-
-	public void setIndustry_code(String industry_code) {
-		this.industry_code = industry_code;
-	}
-
-	public String getShort_description() {
-		short_description = name_prod;
-		return short_description;
-	}
-
-	public void setShort_description(String short_description) {
-		this.short_description = short_description;
-	}
-
-	public Float getDefault_price() {
-		return default_price;
-	}
-
-	public void setDefault_price(Float default_price) {
-		this.default_price = default_price;
-	}
-
-	public String getBrand() {
-		
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	public Long getIdProveedor() {
+	public Integer getIdProveedor() {
 		return idProveedor;
 	}
 
-	public void setIdProveedor(Long idProveedor) {
+	public void setIdProveedor(Integer idProveedor) {
 		this.idProveedor = idProveedor;
 	}
 
-	public Long getIdMarca() {
-		return idMarca;
+	public Float getPrice() {
+		return price;
 	}
 
-	public void setIdMarca(Long idMarca) {
-		this.idMarca = idMarca;
+	public void setPrice(Float price) {
+		this.price = price;
 	}
-		
+
+	public Float getSpecial_price() {
+		return special_price;
+	}
+
+	public void setSpecial_price(Float special_price) {
+		this.special_price = special_price;
+	}
+
+	public Float getDiscount_value() {
+		return discount_value;
+	}
+
+	public void setDiscount_value(Float discount_value) {
+		this.discount_value = discount_value;
+	}
+
+	public Integer getDiscount_type() {
+		return discount_type;
+	}
+
+	public void setDiscount_type(Integer discount_type) {
+		this.discount_type = discount_type;
+	}
+
+	public Date getSpecial_price_start_date() {
+		return special_price_start_date;
+	}
+
+	public void setSpecial_price_start_date(Date special_price_start_date) {
+		this.special_price_start_date = special_price_start_date;
+	}
+
+	
+
+	public Date getSpecial_price_end_date() {
+		return special_price_end_date;
+	}
+
+	public void setSpecial_price_end_date(Date special_price_end_date) {
+		this.special_price_end_date = special_price_end_date;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Integer getQuantity_min_product() {
+		return quantity_min_product;
+	}
+
+	public void setQuantity_min_product(Integer quantity_min_product) {
+		this.quantity_min_product = quantity_min_product;
+	}
+
+	public Integer getQuantity_max_product() {
+		return quantity_max_product;
+	}
+
+	public void setQuantity_max_product(Integer quantity_max_product) {
+		this.quantity_max_product = quantity_max_product;
+	}
+
+	public String getValid_week_day() {
+		return valid_week_day;
+	}
+
+	public void setValid_week_day(String valid_week_day) {
+		this.valid_week_day = valid_week_day;
+	}
+
+	public String getRetailer_group() {
+		return retailer_group;
+	}
+
+	public void setRetailer_group(String retailer_group) {
+		this.retailer_group = retailer_group;
+	}
+
+			
 }

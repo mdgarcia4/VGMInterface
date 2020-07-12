@@ -25,6 +25,6 @@ public interface CanalProvRubroRepo extends JpaRepository<CanalProvRubro, PkCana
     		+ "   and cpr.id.idCanalProv = cp.id.idCanalProv"
     		+ "   and cpr.id.idProveedor = ?1"
     		+ "   and cpr.id.idRubro =?2")
-	public Optional<CanalProvRubro> findCanalByProveedorAndRubro(Integer idProveedor, Integer idRubro);
+	public Optional<CanalProvRubro> findCanalByProveedorAndRubro(Long idProveedor, Long idRubro);
  
 }

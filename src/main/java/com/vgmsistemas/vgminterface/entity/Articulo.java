@@ -77,7 +77,7 @@ public class Articulo{
 	@JoinColumn(name = "id_linea")
 	private Marca marca;
 	
-	@OneToMany()
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_articulos", referencedColumnName= "id_articulos", insertable = false, updatable = false)
 	private Set<ListaPrecioDetalle> listaPrecios;
 	@Column(name = "pr_arcor_a")

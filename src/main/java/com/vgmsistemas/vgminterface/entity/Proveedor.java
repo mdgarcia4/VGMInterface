@@ -23,10 +23,10 @@ public class Proveedor {
 	private Long idSucursal;
 	@Column(name = "nu_cuit")
 	private String nuCuit;
-	@Column(name = "sn_web")
-	private String snWeb;
 	@Column(name="id_cliente_prov")
 	private Long idClienteProv;
+	@Column(name="sn_web")
+	private String snWeb;
 	
 	public Long getIdProveedor() {
 		return idProveedor;
@@ -64,17 +64,17 @@ public class Proveedor {
 	public void setNuCuit(String nuCuit) {
 		this.nuCuit = nuCuit;
 	}
-	public String getSnWeb() {
-		return snWeb;
-	}
-	public void setSnWeb(String snWeb) {
-		this.snWeb = snWeb;
-	}
 	public Long getIdClienteProv() {
 		return idClienteProv;
 	}
 	public void setIdClienteProv(Long idClienteProv) {
 		this.idClienteProv = idClienteProv;
+	}
+	public String getSnWeb() {
+		return snWeb;
+	}
+	public void setSnWeb(String snWeb) {
+		this.snWeb = snWeb;
 	}
 	
 }

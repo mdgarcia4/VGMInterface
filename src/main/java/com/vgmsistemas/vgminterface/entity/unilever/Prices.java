@@ -6,16 +6,16 @@ import javax.persistence.ElementCollection;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-public class Products {
+public class Prices {
 	
 	@JsonView(Views.Public.class)
 	private String distributor_code;
 
 	@ElementCollection
-	@JsonView(Views.Producto.class)
+	@JsonView(Views.Precio.class)
 	private List<Product> products;
 
-	public Products(List<Product> products) {
+	public Prices(List<Product> products) {
 		this.products= products;
 	}
 

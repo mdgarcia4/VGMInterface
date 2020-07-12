@@ -7,4 +7,8 @@ public class Views {
     }
     public static class Request extends Response {
     }
+    public static class Producto extends Public{
+    }
+    public static class Precio extends Public{
+    }
 }

@@ -88,7 +88,9 @@ public class CuentaClienteService {
 						
 		    // Trato el rubro
 			Integer rubro = cliente.get().getIdRubroCliente();
-			Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( (int) param.get().getIdProveedor(), rubro);
+			LOG.info("CuentaCliente crear(). Antes de buscar el canal del proveedor con el rubro " + rubro );
+			LOG.info("Proveedor N°: " + param.get().getIdProveedor());
+			Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( (long) param.get().getIdProveedor(),(long) rubro);
 			if (canal.isPresent()) {
 				ctacliente.setCustomer_type(String.valueOf(canal.get().getId().getIdCanalProv())); ;
 			}

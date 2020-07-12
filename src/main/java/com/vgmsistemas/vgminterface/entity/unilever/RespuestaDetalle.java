@@ -28,6 +28,8 @@ public class RespuestaDetalle implements Serializable{
 	@Column(name = "de_estado")
 	private String status_prod;
 	
+	@Column(name = "de_estado_precio")
+	private String status;
 	
 	@ManyToOne
     @JoinColumn(name = "id_respuesta")
@@ -63,6 +65,14 @@ public class RespuestaDetalle implements Serializable{
 
 	public void setRespuesta(Respuesta respuesta) {
 		this.respuesta = respuesta;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 

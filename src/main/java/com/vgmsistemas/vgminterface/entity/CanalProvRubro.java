@@ -65,6 +65,8 @@ public class CanalProvRubro implements Serializable{
 	}
 
 	
-	
+	public CanalProvRubro() {
+		
+	}
 
 }
