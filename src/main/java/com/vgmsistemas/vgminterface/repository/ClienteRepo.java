@@ -1,5 +1,6 @@
 package com.vgmsistemas.vgminterface.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,16 +27,26 @@ public interface ClienteRepo extends JpaRepository<Cliente, PkCliente>  {
 	@Query("SELECT c FROM Cliente c "
     		+ "WHERE "
     		+ " cuit = ?1"
-    		+ " and c.domicilio = ?2"
+    		+ " and c.deAltura= ?2"
     		+ " and c.localidad.codigoPostal = ?3"
     		+ " and c.localidad.provincia.descripcion = ?4")
-	public Optional<Cliente> findClienteByCuit(String cuit, String domicilio, Integer codigoPostal, String provincia);
+	public Optional<Cliente> findClienteByCuit(String cuit, String deAltura, Integer codigoPostal, String provincia);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
+    		+ " cuit = ?1")
+	public List<Cliente> findClienteByCuit(String cuit);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
+    		+ " cuit = ?1")
+	public Optional<Cliente> findUnClienteByCuit(String cuit);
 	
 	@Query("SELECT c FROM Cliente c "
     		+ "WHERE "
     		+ " idNroDoc = ?1"
-    		+ " and c.domicilio = ?2"
+    		+ " and c.deAltura = ?2"
     		+ " and c.localidad.codigoPostal = ?3"
     		+ " and c.localidad.provincia.descripcion = ?4")
-	public Optional<Cliente> findClienteByDni(String dni, String domicilio, Integer codigoPostal, String provincia);
+	public Optional<Cliente> findClienteByDni(String dni, String deAltura, Integer codigoPostal, String provincia);
 }

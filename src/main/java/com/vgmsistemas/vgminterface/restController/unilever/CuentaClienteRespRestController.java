@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(RutasServicios.CUENTA_CLIENTE_RESPUESTA)
 public class CuentaClienteRespRestController {
-	private static Logger LOG = LoggerFactory.getLogger(CuentaClienteRestController.class)	;
+	private static Logger LOG = LoggerFactory.getLogger(CuentaClienteRespRestController.class)	;
 	
 	@Autowired
 	CuentaClienteService cuentaClienteService;
@@ -30,7 +30,7 @@ public class CuentaClienteRespRestController {
 	public CuentaCliente respuestaCuentaCliente(@RequestBody String clieString) throws Exception {
 		Gson gson = new Gson();
 		JSONObject jsonClie = new JSONObject(clieString);
-		LOG.info(clieString);
+		LOG.info("CuentaCliente respuestaCuentaCliente(). Json: " + clieString);
 		CuentaCliente cuentaCliente = gson.fromJson(jsonClie.toString(), CuentaCliente.class);
 		
 		cuentaCliente = cuentaClienteService.actualizarEnviado(cuentaCliente);

@@ -101,6 +101,12 @@ public class CuentaClienteService {
 			LOG.info("CuentaCliente.crear(). Trato de crear el Retailer. " + ctacliente.getCuit_dni_id());
 			ctacliente = cuentaClienteRepo.save(ctacliente);
 			LOG.info("CuentaCliente.crear(). Creó OK el Retailer. " + ctacliente.getCuit_dni_id());
+			
+			if (ctacliente.getIdCliente() == null ) {
+				return ctacliente;
+			}	else {
+				
+			}
 			return ctacliente;
 		} catch (Exception e) {
 			LOG.error("CuentaCliente crear(). Al tratar de crear el Retailer. " + e.getMessage());
@@ -149,8 +155,14 @@ public class CuentaClienteService {
 	
 	public CuentaCliente actualizarEnviado(CuentaCliente ctacliente) throws Exception {
 		CuentaCliente cuentaCliente;
+		if (ctacliente.getStore_Status().equals("1") ) {
+			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con Store_id_ERP. " + ctacliente.getStore_id_ERP());
+			cuentaCliente = cuentaClienteRepo.findCuentaByStore_id_ERP(ctacliente.getStore_id_ERP());
+		} else {
+			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con EMAIL. " + ctacliente.getEmail());
+			cuentaCliente = cuentaClienteRepo.findCuentaByEmail(ctacliente.getEmail());
+		}
 		
-		cuentaCliente = cuentaClienteRepo.findCuentaByStore_id_ERP(ctacliente.getStore_id_ERP());
 		
 		cuentaCliente.setSn_enviado('S');
 		

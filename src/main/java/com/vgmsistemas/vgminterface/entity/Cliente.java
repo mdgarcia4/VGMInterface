@@ -22,6 +22,12 @@ public class Cliente{
 	@Column(name = "de_direccion")
 	private String domicilio;
 	
+	@Column(name = "de_calle")
+	private String deCalle;
+	
+	@Column(name = "de_altura")
+	private String deAltura;
+	
 	@Column(name = "id_cuit")
 	private String cuit;
 	
@@ -499,15 +505,20 @@ public class Cliente{
 		this.idRubroCliente = idRubroCliente;
 	}
 
-	
-	
-
-	/*public String getLimiteDisponibilidadSqlite() {
-		return limiteDisponibilidadSqlite;
+	public String getDeCalle() {
+		return deCalle;
 	}
 
-	public void setLimiteDisponibilidadSqlite(String limiteDisponibilidadSqlite) {
-		this.limiteDisponibilidadSqlite = limiteDisponibilidadSqlite;
-	}	*/
+	public void setDeCalle(String deCalle) {
+		this.deCalle = deCalle;
+	}
+
+	public String getDeAltura() {
+		return deAltura;
+	}
+
+	public void setDeAltura(String deAltura) {
+		this.deAltura = deAltura;
+	}
 	
 }
