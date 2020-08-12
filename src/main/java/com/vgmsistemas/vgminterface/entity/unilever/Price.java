@@ -9,14 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "store_id_ERP","price","special_price","special_price_start_date","special_price_end_date",
-	"discount_value","discount_type","quantity_min_product","quantity_max_product","valid_week_day","retailer_group"})
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "store_id_ERP","retailer_group","price","special_price","special_price_start_date","special_price_end_date",
+	"discount_value","discount_type","quantity_min_product","quantity_max_product","valid_week_day"})
 @Table( name = "v_precios_interface")
 public class Price{
 
@@ -32,13 +31,17 @@ public class Price{
 	private Integer idProveedor;
 	
 	@JsonView(Views.Precio.class)
+	@Column(name = "store_id_ERP")
+	private String store_id_ERP;
+	
+	@JsonView(Views.Precio.class)
 	@Column(name = "price")
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "##,###,##0.00" )
 	private Float price;
 	
 	@JsonView(Views.Precio.class)
 	@Column(name = "special_price")
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "##,###,##0.00" )
 	private Float special_price;
 	
 	@JsonView(Views.Precio.class)
@@ -48,12 +51,12 @@ public class Price{
 	
 	@JsonView(Views.Precio.class)
 	@Column(name = "special_price_end_date")
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonFormat(shape = JsonFormat.Shape.STRING )
 	private Date special_price_end_date;
 	
 	@JsonView(Views.Precio.class)
 	@Column(name="discount_value")
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "##,###,##0.00" )
 	private Float discount_value;
 	
 	@JsonView(Views.Precio.class)
@@ -199,6 +202,16 @@ public class Price{
 	public void setRetailer_group(String retailer_group) {
 		this.retailer_group = retailer_group;
 	}
+
+	public String getStore_id_ERP() {
+		return store_id_ERP;
+	}
+
+	public void setStore_id_ERP(String store_id_ERP) {
+		this.store_id_ERP = store_id_ERP;
+	}
+
+	
 
 			
 }

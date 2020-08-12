@@ -29,6 +29,7 @@ public class PreciosRespRestController {
 	public Integer createRespuesta(@RequestBody String respuestaString) throws Exception {
 		Gson gson = new Gson();
 		JSONObject jsonProd = new JSONObject(respuestaString);
+		LOG.info("Json recibido:" + respuestaString );
 		Respuesta respuesta = gson.fromJson(jsonProd.toString(), Respuesta.class);
 		
 		try {
