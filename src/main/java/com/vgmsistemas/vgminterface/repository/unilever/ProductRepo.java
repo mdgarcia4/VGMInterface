@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.vgmsistemas.vgminterface.entity.unilever.Product;
 
 @Repository
-public interface ProductRepo extends JpaRepository<Product, Integer>  {
+public interface ProductRepo extends JpaRepository<Product, Long>  {
 	public List<Product> findByIdProveedor(Long idProveedor);
 	@Query("SELECT p FROM Product p"
     		+ " WHERE p.idProveedor =?1"
@@ -28,4 +28,36 @@ public interface ProductRepo extends JpaRepository<Product, Integer>  {
     		+ "   and p.snWeb =?2"
     		+ "   and p.feIngreso = ?3 ")
 	public List<Product> findProdModByProveedor(Long idProveedor, String snWeb, Date feIngreso);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.id =?1")
+	public List<Product> findProdById(Long id);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.EAN =?1")
+	public List<Product> findProdByEAN(String ean);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.idProveedor =?1"
+    		+ "   and p.snWeb =?2"
+    		+ "   and p.feActualizacion = ?3 ")
+	public List<Product> findProdModByProveedorFeActualiza(Long idProveedor, String snWeb, Date feActualizacion);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.idProveedor =?1"
+    		+ "   and p.snWeb =?2"
+    		+ "   and p.feActPrecioInterfaz = ?3 ")
+	public List<Product> findProdModByProveedorFeActPrecioInterfaz(Long idProveedor, String snWeb, Date feActPrecioInterfaz);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.idProveedor =?1"
+    		+ "   and p.snWeb =?2"
+    		+ "   and p.feActualizacion = ?3 ")
+	public Page<Product> findProdByActualizaPagina(Long idProveedor, String snWeb, Date feActualizacion, Pageable pageable);
+	
+	@Query("SELECT p FROM Product p"
+    		+ " WHERE p.idProveedor =?1"
+    		+ "   and p.snWeb =?2"
+    		+ "   and p.feActPrecioInterfaz = ?3 ")
+	public Page<Product> findProdByActPrecioInterfazPagina(Long idProveedor, String snWeb, Date feActualizacion, Pageable pageable);
 }

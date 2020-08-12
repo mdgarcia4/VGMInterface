@@ -2,9 +2,7 @@
 package com.vgmsistemas.vgminterface.entity.unilever;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,10 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -70,7 +66,13 @@ public class Product{
 	@JsonView(Views.Producto.class)
 	private String short_description;
 	
-	@Column(name = "pr_arcor_a")
+	@Column(name = "pr_arcor_c")
+	private Float prBaseSIVA;
+	
+	@Column(name= "ta_iva")
+	private Float taIva;
+	
+	@Transient
 	@JsonView(Views.Producto.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private Float default_price;
@@ -99,6 +101,12 @@ public class Product{
 	@JoinColumn(name = "id_articulos", referencedColumnName= "id_articulos", insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN) 
 	private Set<Price> prices;
+	
+	@Column(name = "fe_act_precio_interfaz")
+	private Date feActPrecioInterfaz;
+	
+	@Column(name = "fe_actualizacion")
+	private Date feActualizacion;
 	
 	public Long getId() {
 		return id;
@@ -194,7 +202,8 @@ public class Product{
 	}
 
 	public Float getDefault_price() {
-		return default_price;
+		this.default_price=prBaseSIVA * (1 + taIva) ;
+		return prBaseSIVA * (1 + taIva);
 	}
 
 	public void setDefault_price(Float default_price) {
@@ -256,6 +265,38 @@ public class Product{
 
 	public void setPrices(Set<Price> prices) {
 		this.prices = prices;
+	}
+
+	public Float getPrBaseSIVA() {
+		return prBaseSIVA;
+	}
+
+	public void setPrBaseSIVA(Float prBaseSIVA) {
+		this.prBaseSIVA = prBaseSIVA;
+	}
+
+	public Float getTaIva() {
+		return taIva;
+	}
+
+	public void setTaIva(Float taIva) {
+		this.taIva = taIva;
+	}
+
+	public Date getFeActPrecioInterfaz() {
+		return feActPrecioInterfaz;
+	}
+
+	public void setFeActPrecioInterfaz(Date feActPrecioInterfaz) {
+		this.feActPrecioInterfaz = feActPrecioInterfaz;
+	}
+
+	public Date getFeActualizacion() {
+		return feActualizacion;
+	}
+
+	public void setFeActualizacion(Date feActualizacion) {
+		this.feActualizacion = feActualizacion;
 	}
 
 	
