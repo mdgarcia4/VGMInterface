@@ -11,4 +11,8 @@ public class Views {
     }
     public static class Precio extends Public{
     }
+    public static class Inventory extends Public{
+    }
+    public static class Orden extends Public{
+    }
 }
