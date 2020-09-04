@@ -50,7 +50,7 @@ public class Inventory{
 
 
 	public String getEAN() {
-		return EAN;
+		return EAN.trim();
 	}
 
 

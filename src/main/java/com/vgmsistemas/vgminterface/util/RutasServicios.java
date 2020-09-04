@@ -7,6 +7,7 @@ public class RutasServicios {
 	// Ingresos desde compre ahora
 	public static final String CUENTA_CLIENTE = BASE_WS + "/Retailer";
 	public static final String PEDIDO = BASE_WS + "/SalesOrder";
+	public static final String PEDIDO_ACTUALIZA = BASE_WS + "/SalesOrder/Update";
 	
 	// Envios a COMPRE AHORA
 	public static final String ENVIAR_ESTADO_CUENTA_CLIENTE = BASE_WS +"/enviarEstadoCuentaCliente";

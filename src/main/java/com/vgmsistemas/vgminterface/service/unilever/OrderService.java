@@ -1,5 +1,6 @@
 package com.vgmsistemas.vgminterface.service.unilever;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,14 @@ public class OrderService {
 		// Creo orden Original
 		for (Order order:ords) {
 			order.setDistributor_code(orders.getDistributor_code());
-			tratarOrden(order,tiOrden);
+			
+			// Esto se hace porque tiene que llegar a la página en positivo para que se envie el correo al cliente
+			if (order.getDiscount_amount()<0) {
+				order.setDiscount_amount(order.getDiscount_amount() * -1);
+			}
+			order = tratarOrden(order,tiOrden);
+			order.setStatus("1");
+			
 		}
 		
 	return orders;	
@@ -66,12 +74,13 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		orden =orderRepo.findByOrder_id(tiOrden,ordenRecibida.getOrder_id()); 
 		if (!orden.isPresent()) {
 			// Cliente nuevo y
+			
 			ordenRecibida = crear(ordenRecibida, tiOrden);
-			ordenRecibida.setStatus("1");
+			
 			return ordenRecibida;
 		} else {
 			LOG.info("Order tratarOrden(). La Orden " + orden.get().getOrder_id() + " ya existe. No se crea un nuevo registro, se devuelve el actual");
-			ordenRecibida.setStatus("1");
+			
 			return ordenRecibida;
 		}
 	}
@@ -83,7 +92,8 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		order.setOrder_source("compreahora");
 		order.setSnEstadoEnviado("N");
 		order.setSnGenerado("N");
-		
+		order.setErp_order_id("");
+		order.setUpdated_at(new Date());
 		
 		for (OrderItem item:order.getItems()) {
 			item.setOrder(order);
@@ -130,6 +140,9 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 			}
 			ord.setItems_changed(items_changed);
 		}
+		
+
+
 		
 		// Creo el objeto y le asigno la lista
 		Orders ordenes = new Orders(ordenLista);

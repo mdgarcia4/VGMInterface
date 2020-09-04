@@ -119,7 +119,7 @@ public class InternosRestController {
 	
 	@JsonView(Views.Producto.class)
 	@RequestMapping(value = RutasServicios.ENVIAR_PRODUCTO, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Integer enviarProducto(String ean) throws Exception {
+	public Integer enviarProducto(@RequestParam (required = false) String ean) throws Exception {
 		try {
 			// Primero Obtengo la info
 			return productsService.enviarEAN(ean);
@@ -189,7 +189,7 @@ public class InternosRestController {
 	
 	@JsonView(Views.Producto.class)
 	@RequestMapping(value = RutasServicios.ENVIAR_PRECIOS_PRODUCTO, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Integer enviarPrecio(String ean) throws Exception {
+	public Integer enviarPrecio(@RequestParam (required = false) String ean) throws Exception {
 		try {
 			// Primero Obtengo la info
 			return productsService.enviarPreciosProducto(ean);
@@ -231,7 +231,7 @@ public class InternosRestController {
 	
 	@JsonView(Views.Producto.class)
 	@RequestMapping(value = RutasServicios.ENVIAR_STOCK_PRODUCTO, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Integer enviarStockProducto(String ean) throws Exception {
+	public Integer enviarStockProducto(@RequestParam (required = false) String ean) throws Exception {
 		try {
 			// Primero Obtengo la info
 			return inventoryService.enviarEAN(ean);

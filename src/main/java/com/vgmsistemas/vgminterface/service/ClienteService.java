@@ -36,7 +36,7 @@ public class ClienteService {
 		String domicilio = ctaCliente.getStreet() + ' ' + ctaCliente.getNumber();
 		domicilio = domicilio.toUpperCase();
 		String altura = ctaCliente.getNumber();
-		Integer codigoPostal = Integer.parseInt(ctaCliente.getPostal_code().substring(1, 5));
+		//Integer codigoPostal = Integer.parseInt(ctaCliente.getPostal_code().substring(1, 5));
 		String provincia = ctaCliente.getProvince();
 		provincia = provincia.toUpperCase();
 		Optional<Cliente> clie ;
@@ -55,9 +55,9 @@ public class ClienteService {
 				LOG.info(" findCliente() . Antes de llamar a findClienteByCuit" );
 				LOG.info("CUIT/DNI: " + cuitDni);
 				LOG.info("Altura: " + altura);
-				LOG.info("Codigo Postal: " + codigoPostal);
+				//LOG.info("Codigo Postal: " + codigoPostal);
 				LOG.info("provincia: " + provincia);
-				clie = clienteRepo.findClienteByCuit(cuitDni, altura, codigoPostal, provincia);
+				clie = clienteRepo.findClienteByCuit(cuitDni, altura, provincia);
 			}
 			
 		} else {
@@ -65,9 +65,9 @@ public class ClienteService {
 			LOG.info(" findCliente() . Antes de llamar a findClienteByCuit" );
 			LOG.info("CUIT/DNI: " + cuitDni);
 			LOG.info("Altura: " + altura);
-			LOG.info("Codigo Postal: " + codigoPostal);
+			//LOG.info("Codigo Postal: " + codigoPostal);
 			LOG.info("provincia: " + provincia);
-			clie = clienteRepo.findClienteByDni(cuitDni, altura, codigoPostal, provincia);
+			clie = clienteRepo.findClienteByDni(cuitDni, altura,  provincia);
 		}
 		return clie;   
 	}

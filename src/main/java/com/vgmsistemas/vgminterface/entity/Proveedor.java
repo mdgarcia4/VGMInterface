@@ -27,6 +27,9 @@ public class Proveedor {
 	private Long idClienteProv;
 	@Column(name="sn_web")
 	private String snWeb;
+	@Column(name="sn_int_web")
+	private String snIntWeb;
+	
 	
 	public Long getIdProveedor() {
 		return idProveedor;
@@ -75,6 +78,12 @@ public class Proveedor {
 	}
 	public void setSnWeb(String snWeb) {
 		this.snWeb = snWeb;
+	}
+	public String getSnIntWeb() {
+		return snIntWeb;
+	}
+	public void setSnIntWeb(String snIntWeb) {
+		this.snIntWeb = snIntWeb;
 	}
 	
 }

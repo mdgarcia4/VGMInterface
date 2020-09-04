@@ -50,6 +50,9 @@ public class ProductsService {
 	@Autowired
 	PriceRepo precioRepo;
 	
+	@Value("${lotesEsperaSegundos}")
+	Integer lotesEsperaSegundos;
+	
 	private static Logger LOG = LoggerFactory.getLogger(ProductsService.class)	;
 	
 	public Products leerProductos() throws Exception {
@@ -87,17 +90,17 @@ public class ProductsService {
 		List<Product> listaProduct;
 		
 		if (tiEnvio == "TODOS") {
-			paginaProduct = productoRepo.findProdByPagina(idProveedor,"S", pagina);
+			paginaProduct = productoRepo.findProdByPagina("S","S", pagina);
 		} else {
-			paginaProduct = productoRepo.findProdByActualizaPagina(idProveedor, "S", suc.get().getFechaSistema(), pagina);
+			paginaProduct = productoRepo.findProdByActualizaPagina("S", "S", suc.get().getFechaSistema(), pagina);
 		}
 			
 		totalPaginas = paginaProduct.getTotalPages();
-		for ( int pag = 1; pag <= totalPaginas; pag++ ) {
+		for ( int pag = 0; pag <= totalPaginas; pag++ ) {
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			// Recupero la pagina
-			paginaProduct = productoRepo.findProdByPagina(idProveedor,"S", pagina); 
+			paginaProduct = productoRepo.findProdByPagina("S","S", pagina); 
 		
 			listaProduct = paginaProduct.toList();
 			
@@ -129,6 +132,8 @@ public class ProductsService {
 		    if (result != 0) {
 		    	LOG.info("El resultado del envio fue incorrecto.");
 		    }
+		    
+		    Thread.sleep (lotesEsperaSegundos * 1000);
 		}
 		return 0;
 	}
@@ -150,9 +155,9 @@ public class ProductsService {
 		// Recupero la lista de productos
 		List<Product> listaProduct;
 		if (tiEnvio == "TODOS") {
-			listaProduct = productoRepo.findProdByIdProveedor(idProveedor,"S");
+			listaProduct = productoRepo.findProdByProveedores("S","S");
 		} else {
-			listaProduct = productoRepo.findProdModByProveedorFeActualiza(idProveedor,"S",suc.get().getFechaSistema());
+			listaProduct = productoRepo.findProdModByProveedorFeActualiza("S","S",suc.get().getFechaSistema());
 		}
 		
 		// Actualizo los campos en null y los agrego a la lista de productos
@@ -199,7 +204,12 @@ public class ProductsService {
 		// Recupero la lista de productos
 		List<Product> listaProduct;
 		
-		listaProduct = productoRepo.findProdByEAN(ean);
+		if (ean == null ) {
+			listaProduct = productoRepo.findProdByEAN();
+		} else {
+			listaProduct = productoRepo.findProdByEAN(ean);	
+		}
+		
 				
 		// Actualizo los campos en null y los agrego a la lista de productos
 		for (Product prod: listaProduct) {
@@ -245,9 +255,9 @@ public class ProductsService {
 		// Recupero la lista de productos
 		List<Product> listaProduct;
 		if (tiEnvio == "TODOS") {
-			listaProduct = productoRepo.findProdByIdProveedor(idProveedor,"S");
+			listaProduct = productoRepo.findProdByProveedores("S","S");
 		} else {
-			listaProduct = productoRepo.findProdModByProveedorFeActPrecioInterfaz(idProveedor,"S",suc.get().getFechaSistema());
+			listaProduct = productoRepo.findProdModByProveedorFeActPrecioInterfaz("S","S",suc.get().getFechaSistema());
 		}
 		Long id;
 		
@@ -288,12 +298,12 @@ public class ProductsService {
 		List<Product> listaProduct;
 		
 		if (tiEnvio == "TODOS") {
-			paginaProduct = productoRepo.findProdByPagina(idProveedor,"S", pagina);
+			paginaProduct = productoRepo.findProdByPagina("S","S", pagina);
 		} else {
-			paginaProduct = productoRepo.findProdByActPrecioInterfazPagina(idProveedor, "S", suc.get().getFechaSistema(), pagina);
+			paginaProduct = productoRepo.findProdByActPrecioInterfazPagina("S", "S", suc.get().getFechaSistema(), pagina);
 		}
 		totalPaginas = paginaProduct.getTotalPages();
-		for ( int pag = 1; pag <= totalPaginas; pag++ ) {
+		for ( int pag = 0; pag <= totalPaginas; pag++ ) {
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			// Recupero la pagina
@@ -307,6 +317,8 @@ public class ProductsService {
 			
 			// Envio al Web Service
 		    result = pricesWs.callWebService(precios, param);
+		    
+		    Thread.sleep (lotesEsperaSegundos * 1000);
 		}
 		return 0;
 	}
@@ -328,7 +340,11 @@ public class ProductsService {
 		// Recupero la lista de productos
 		List<Product> listaProduct;
 		
-		listaProduct = productoRepo.findProdByEAN(ean);
+		if (ean == null) {
+			listaProduct = productoRepo.findProdByEAN();
+		} else {
+			listaProduct = productoRepo.findProdByEAN(ean);
+		}
 		
 		Prices precios = new Prices(listaProduct);
 		

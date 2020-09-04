@@ -48,6 +48,9 @@ public class InventoryService {
 	@Autowired
 	InventoryRepo inventoryRepo;
 	
+	@Value("${lotesEsperaSegundos}")
+	Integer lotesEsperaSegundos;
+	
 	private static Logger LOG = LoggerFactory.getLogger(InventoryService.class)	;
 	
 	
@@ -68,9 +71,9 @@ public class InventoryService {
 		// Recupero la lista de productos
 		List<Inventory> listaInventory;
 		if (tiEnvio == "TODOS") {
-			listaInventory = inventoryRepo.findStock(suc.get().getId(), idProveedor,"S");
+			listaInventory = inventoryRepo.findStock(suc.get().getId(), "S","S");
 		} else {
-			listaInventory = inventoryRepo.findStock(suc.get().getId(), idProveedor,"S",suc.get().getFechaSistema());
+			listaInventory = inventoryRepo.findStock(suc.get().getId(), "S","S",suc.get().getFechaSistema());
 		}
 		
 		// Actualizo los campos en null y los agrego a la lista de productos
@@ -104,7 +107,7 @@ public class InventoryService {
 		Page<Inventory> paginaInventory;
 		List<Inventory> listaInventory;
 		
-		paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),idProveedor,"S", pagina);
+		paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
 		totalPaginas = paginaInventory.getTotalPages();
 		for ( int pag = 1; pag <= totalPaginas; pag++ ) {
 			
@@ -113,9 +116,9 @@ public class InventoryService {
 			
 			// Recupero la pagina
 			if (tiEnvio == "TODOS") {
-				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),idProveedor,"S", pagina);
+				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
 			} else {
-				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),idProveedor,"S", pagina);
+				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
 			}
 			
 			listaInventory = paginaInventory.toList();
@@ -127,6 +130,8 @@ public class InventoryService {
 		
 			// Envio al Web Service
 		    result = inventoryWs.callWebService(stocks, param);
+		    
+		    Thread.sleep (lotesEsperaSegundos * 1000);
 		}
 		return 0;
 	}
@@ -148,8 +153,11 @@ public class InventoryService {
 		// Recupero la lista de productos
 		List<Inventory> listaInventory;
 
-		listaInventory = inventoryRepo.findStockByEAN(suc.get().getId(),ean);
-
+		if (ean==null) {
+			listaInventory = inventoryRepo.findStockByEAN(suc.get().getId());			
+		} else {
+			listaInventory = inventoryRepo.findStockByEAN(suc.get().getId(),ean);	
+		}
 		
 		// Actualizo los campos en null y los agrego a la lista de productos
 		Inventories stocks = new Inventories(listaInventory);

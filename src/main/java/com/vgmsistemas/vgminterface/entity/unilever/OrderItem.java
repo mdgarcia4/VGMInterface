@@ -141,7 +141,7 @@ public class OrderItem{
 	}
 
 	public String getEAN() {
-		return EAN;
+		return EAN.trim();
 	}
 
 	public void setEAN(String eAN) {

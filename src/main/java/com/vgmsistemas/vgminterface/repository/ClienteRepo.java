@@ -34,6 +34,13 @@ public interface ClienteRepo extends JpaRepository<Cliente, PkCliente>  {
 	
 	@Query("SELECT c FROM Cliente c "
     		+ "WHERE "
+    		+ " cuit = ?1"
+    		+ " and c.deAltura= ?2"
+    		+ " and c.localidad.provincia.descripcion = ?3")
+	public Optional<Cliente> findClienteByCuit(String cuit, String deAltura, String provincia);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
     		+ " cuit = ?1")
 	public List<Cliente> findClienteByCuit(String cuit);
 	
@@ -49,4 +56,11 @@ public interface ClienteRepo extends JpaRepository<Cliente, PkCliente>  {
     		+ " and c.localidad.codigoPostal = ?3"
     		+ " and c.localidad.provincia.descripcion = ?4")
 	public Optional<Cliente> findClienteByDni(String dni, String deAltura, Integer codigoPostal, String provincia);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
+    		+ " idNroDoc = ?1"
+    		+ " and c.deAltura = ?2"
+    		+ " and c.localidad.provincia.descripcion = ?3")
+	public Optional<Cliente> findClienteByDni(String dni, String deAltura, String provincia);
 }

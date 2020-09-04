@@ -28,7 +28,7 @@ public class OrdenRespRestController {
 	RespuestaOrdenService respuestaOrdenService;
 	
 	@PostMapping()
-	public Integer actualizarOrden(@RequestBody String respuestaString) throws Exception {
+	public Integer ackOrden(@RequestBody String respuestaString) throws Exception {
 		Gson gson = new Gson();
 		JSONObject jsonProd = new JSONObject(respuestaString);
 		LOG.info("Json recibido:" + respuestaString );
