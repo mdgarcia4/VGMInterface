@@ -51,6 +51,12 @@ public class InventoryService {
 	@Value("${lotesEsperaSegundos}")
 	Integer lotesEsperaSegundos;
 	
+	@Value("${depositoDefault}")
+	long idDeposito;
+	
+	@Value("${sucursalDefault}")
+	long idSucursal;
+	
 	private static Logger LOG = LoggerFactory.getLogger(InventoryService.class)	;
 	
 	
@@ -59,7 +65,7 @@ public class InventoryService {
 		InventoryWs inventoryWs = new InventoryWs();
 		
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
 				
 		// Optengo los parametros de la interface
 		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
@@ -71,9 +77,9 @@ public class InventoryService {
 		// Recupero la lista de productos
 		List<Inventory> listaInventory;
 		if (tiEnvio == "TODOS") {
-			listaInventory = inventoryRepo.findStock(suc.get().getId(), "S","S");
+			listaInventory = inventoryRepo.findStock(idDeposito, "S","S");
 		} else {
-			listaInventory = inventoryRepo.findStock(suc.get().getId(), "S","S",suc.get().getFechaSistema());
+			listaInventory = inventoryRepo.findStock(idDeposito, "S","S",suc.get().getFechaSistema());
 		}
 		
 		// Actualizo los campos en null y los agrego a la lista de productos
@@ -90,11 +96,11 @@ public class InventoryService {
 		int totalPaginas;
 		
 		int result;
-		Pageable pagina = PageRequest.of(1, tamanioPagina);
+		Pageable pagina = PageRequest.of(0, tamanioPagina);
 		InventoryWs inventoryWs = new InventoryWs();
 		
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
 		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
@@ -107,18 +113,18 @@ public class InventoryService {
 		Page<Inventory> paginaInventory;
 		List<Inventory> listaInventory;
 		
-		paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
+		paginaInventory = inventoryRepo.findStockByPagina(idDeposito,"S","S", pagina);
 		totalPaginas = paginaInventory.getTotalPages();
-		for ( int pag = 1; pag <= totalPaginas; pag++ ) {
+		for ( int pag = 0; pag < totalPaginas; pag++ ) {
 			
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			
 			// Recupero la pagina
 			if (tiEnvio == "TODOS") {
-				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
+				paginaInventory = inventoryRepo.findStockByPagina(idDeposito,"S","S", pagina);
 			} else {
-				paginaInventory = inventoryRepo.findStockByPagina(suc.get().getId(),"S","S", pagina);
+				paginaInventory = inventoryRepo.findStockByPagina(idDeposito,"S","S", pagina);
 			}
 			
 			listaInventory = paginaInventory.toList();
@@ -141,7 +147,7 @@ public class InventoryService {
 		InventoryWs inventoryWs = new InventoryWs();
 		
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
 		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
@@ -154,9 +160,9 @@ public class InventoryService {
 		List<Inventory> listaInventory;
 
 		if (ean==null) {
-			listaInventory = inventoryRepo.findStockByEAN(suc.get().getId());			
+			listaInventory = inventoryRepo.findStockByEAN(idDeposito);			
 		} else {
-			listaInventory = inventoryRepo.findStockByEAN(suc.get().getId(),ean);	
+			listaInventory = inventoryRepo.findStockByEAN(idDeposito,ean);	
 		}
 		
 		// Actualizo los campos en null y los agrego a la lista de productos

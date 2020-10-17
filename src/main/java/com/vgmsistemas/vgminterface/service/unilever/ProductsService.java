@@ -71,7 +71,7 @@ public class ProductsService {
 	public Integer enviarProductosxLote(String tiEnvio) throws Exception {
 		int totalPaginas;
 		int result;
-		Pageable pagina = PageRequest.of(1, tamanioPagina);
+		Pageable pagina = PageRequest.of(0, tamanioPagina);
 		
 		ProductsWs productsWs = new ProductsWs();
 		
@@ -96,7 +96,7 @@ public class ProductsService {
 		}
 			
 		totalPaginas = paginaProduct.getTotalPages();
-		for ( int pag = 0; pag <= totalPaginas; pag++ ) {
+		for ( int pag = 0; pag < totalPaginas; pag++ ) {
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			// Recupero la pagina
@@ -279,7 +279,7 @@ public class ProductsService {
 	public Integer enviarPreciosxLote(String tiEnvio) throws Exception {
 		int totalPaginas;
 		int result;
-		Pageable pagina = PageRequest.of(1, tamanioPagina);
+		Pageable pagina = PageRequest.of(0, tamanioPagina);
 		
 		PricesWs pricesWs = new PricesWs();
 		
@@ -303,7 +303,7 @@ public class ProductsService {
 			paginaProduct = productoRepo.findProdByActPrecioInterfazPagina("S", "S", suc.get().getFechaSistema(), pagina);
 		}
 		totalPaginas = paginaProduct.getTotalPages();
-		for ( int pag = 0; pag <= totalPaginas; pag++ ) {
+		for ( int pag = 0; pag < totalPaginas; pag++ ) {
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			// Recupero la pagina
