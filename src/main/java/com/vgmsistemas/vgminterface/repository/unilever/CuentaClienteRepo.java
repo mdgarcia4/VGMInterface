@@ -36,4 +36,14 @@ public interface CuentaClienteRepo extends JpaRepository<CuentaCliente, Integer>
 	@Query("SELECT c FROM CuentaCliente c"
     		+ " WHERE c.email = ?1")
 	public CuentaCliente findCuentaByEmail(String email);
+	
+	@Query("SELECT c FROM CuentaCliente c"
+    		+ " WHERE c.email = ?1")
+	public Optional<CuentaCliente>findCuentaEmail(String email);
+	
+	@Query("SELECT c FROM CuentaCliente c"
+    		+ " WHERE c.idSucursal = ?1"
+    		+ " and c.idCliente = ?2"
+    		+ " and c.idComercio = ?3")
+	public Optional<CuentaCliente>findCuenta(long idSucursal, long idCliente, long idComercio);
 }

@@ -67,12 +67,27 @@ public class ClienteService {
 			LOG.info("Altura: " + altura);
 			//LOG.info("Codigo Postal: " + codigoPostal);
 			LOG.info("provincia: " + provincia);
+			if (!isNumeric(cuitDni)) {
+				cuitDni="-111";
+			}
 			clie = clienteRepo.findClienteByDni(cuitDni, altura,  provincia);
 		}
 		return clie;   
 	}
 	
-	
+	public static boolean isNumeric(String cadena) {
+
+        boolean resultado;
+
+        try {
+            Integer.parseInt(cadena);
+            resultado = true;
+        } catch (NumberFormatException excepcion) {
+            resultado = false;
+        }
+
+        return resultado;
+    }
 	
 
 	public ClienteRepo getClienteRepo() {

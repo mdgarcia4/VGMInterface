@@ -44,14 +44,16 @@ public class CuentaClienteService {
 		if (ctacliente.getStore_id_ERP()== null || ctacliente.getStore_id_ERP().equals("") ) {
 			// Verifico si el registro ya ingresó pero esta con Store_id_ERP vacio
 			Optional<CuentaCliente> cl;
-			cl =cuentaClienteRepo.findCuenta(ctacliente.getCuit_dni_id(), ctacliente.getStreet(), ctacliente.getNumber(), ctacliente.getPostal_code(), ctacliente.getNeighborhood(), ctacliente.getDistrict(), ctacliente.getProvince()); 
+			cl =cuentaClienteRepo.findCuentaEmail(ctacliente.getEmail()); 
 			if (!cl.isPresent()) {
 				// Cliente nuevo y
 				cuentaCliente = crear(ctacliente);
 				return cuentaCliente;
 			} else {
-				LOG.info("CuentaCliente tratarCuenta(). El Retailer con DNI " + ctacliente.getCuit_dni_id() + " ya existe. No se crea un nuevo registro, se devuelve el actual");	
-				return cl.get();
+				LOG.info("CuentaCliente tratarCuenta(). El Retailer con store_id_ERP nro " + ctacliente.getStore_id_ERP() + " se va a actualizar. ");
+				cuentaCliente = actualizar(ctacliente);
+				LOG.info("CuentaCliente tratarCuenta(). Actualización OK. Se actualizó el store_id_ERP nro " + ctacliente.getStore_id_ERP() );
+				return cuentaCliente;
 			}
 			
 		}
@@ -79,22 +81,24 @@ public class CuentaClienteService {
 		ctacliente.setRejection_reason(vacio);
 		if (cliente.isPresent()) {
 			
-			ctacliente.setStore_id_ERP(cliente.get().getId().toString());
-			ctacliente.setIdSucursal(cliente.get().getId().getIdSucursal());
-			ctacliente.setIdCliente(cliente.get().getId().getIdCliente());
-			ctacliente.setIdComercio(cliente.get().getId().getIdComercio());
-			ctacliente.setErp_seller(cliente.get().getIdVendedor());
-			ctacliente.setStore_Status("1");
-						
-		    // Trato el rubro
-			Integer rubro = cliente.get().getIdRubroCliente();
-			LOG.info("CuentaCliente crear(). Antes de buscar el canal del proveedor con el rubro " + rubro );
-			LOG.info("Proveedor N°: " + param.get().getIdProveedor());
-			Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( (long) param.get().getIdProveedor(),(long) rubro);
-			if (canal.isPresent()) {
-				ctacliente.setCustomer_type(String.valueOf(canal.get().getId().getIdCanalProv())); ;
+			// Verifico si el cliente ya esta asignado
+			if (!cuentaClienteRepo.findCuenta(cliente.get().getId().getIdSucursal(),cliente.get().getId().getIdCliente(),cliente.get().getId().getIdComercio()).isPresent() ) {
+				ctacliente.setStore_id_ERP(cliente.get().getId().toString());
+				ctacliente.setIdSucursal(cliente.get().getId().getIdSucursal());
+				ctacliente.setIdCliente(cliente.get().getId().getIdCliente());
+				ctacliente.setIdComercio(cliente.get().getId().getIdComercio());
+				ctacliente.setErp_seller(cliente.get().getIdVendedor());
+				ctacliente.setStore_Status("1");
+							
+			    // Trato el rubro
+				Integer rubro = cliente.get().getIdRubroCliente();
+				LOG.info("CuentaCliente crear(). Antes de buscar el canal del proveedor con el rubro " + rubro );
+				LOG.info("Proveedor N°: " + param.get().getIdProveedor());
+				Optional<CanalProvRubro> canal = canalProvRubroRepo.findCanalByProveedorAndRubro( (long) param.get().getIdProveedor(),(long) rubro);
+				if (canal.isPresent()) {
+					ctacliente.setCustomer_type(String.valueOf(canal.get().getId().getIdCanalProv())); ;
+				}
 			}
-			
 		}
 		// Grabo el cliente y devuelvo el resultado
 		try {
@@ -118,7 +122,7 @@ public class CuentaClienteService {
 	public CuentaCliente actualizar(CuentaCliente ctacliente) throws Exception {
 		CuentaCliente cuentaCliente;
 		
-		cuentaCliente = cuentaClienteRepo.findCuentaByStore_id_ERP(ctacliente.getStore_id_ERP());
+		cuentaCliente = cuentaClienteRepo.findCuentaByEmail(ctacliente.getEmail());
 		
 		cuentaCliente.setDistributor_code(ctacliente.getDistributor_code());
 		cuentaCliente.setProperty_name(ctacliente.getProperty_name());
@@ -138,7 +142,7 @@ public class CuentaClienteService {
 		cuentaCliente.setEmail(ctacliente.getEmail());
 		cuentaCliente.setFirstname(ctacliente.getFirstname());
 		cuentaCliente.setSurname(ctacliente.getSurname());
-		
+		cuentaCliente.setSn_enviado('N');
 		
 		// Grabo las modificaciones cliente y devuelvo el resultado
 		try {
@@ -158,13 +162,13 @@ public class CuentaClienteService {
 		if (ctacliente.getStore_Status().equals("1") ) {
 			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con Store_id_ERP. " + ctacliente.getStore_id_ERP());
 			cuentaCliente = cuentaClienteRepo.findCuentaByStore_id_ERP(ctacliente.getStore_id_ERP());
+			cuentaCliente.setSn_enviado('S');
+			
 		} else {
 			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con EMAIL. " + ctacliente.getEmail());
 			cuentaCliente = cuentaClienteRepo.findCuentaByEmail(ctacliente.getEmail());
+			cuentaCliente.setSn_enviado('N');
 		}
-		
-		
-		cuentaCliente.setSn_enviado('S');
 		
 		// Grabo las modificaciones cliente y devuelvo el resultado
 		try {

@@ -122,7 +122,7 @@ public class CuentaCliente{
 	@JsonView(Views.Request.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_credito_disponible")
-	private Float customer_credit_available = (float) 0.0;
+	private Float customer_credit_available = (float) 0.0 ;
 	
 	@JsonView(Views.Request.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
