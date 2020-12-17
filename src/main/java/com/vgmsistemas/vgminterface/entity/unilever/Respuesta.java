@@ -51,10 +51,6 @@ public class Respuesta implements Serializable{
 		return feRespuesta;
 	}
 
-	public void setFeRespuesta(Date feRespuesta) {
-		this.feRespuesta = feRespuesta;
-	}
-
 	public String getTabla() {
 		return Tabla;
 	}

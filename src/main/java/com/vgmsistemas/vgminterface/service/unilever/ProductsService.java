@@ -192,7 +192,7 @@ public class ProductsService {
 		ProductsWs productsWs = new ProductsWs();
 		
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
 		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
@@ -259,7 +259,7 @@ public class ProductsService {
 		} else {
 			listaProduct = productoRepo.findProdModByProveedorFeActPrecioInterfaz("S","S",suc.get().getFechaSistema());
 		}
-		Long id;
+		//Long id;
 		
 		// Actualizo los campos en null y los agrego a la lista de productos
 		/*for (Product prod: listaProduct) {
@@ -278,7 +278,7 @@ public class ProductsService {
 	@JsonView(Views.Public.class)
 	public Integer enviarPreciosxLote(String tiEnvio) throws Exception {
 		int totalPaginas;
-		int result;
+		//int result;
 		Pageable pagina = PageRequest.of(0, tamanioPagina);
 		
 		PricesWs pricesWs = new PricesWs();
@@ -307,7 +307,7 @@ public class ProductsService {
 			// Indico pagina a leer
 			pagina = PageRequest.of(pag, tamanioPagina);
 			// Recupero la pagina
-			paginaProduct = productoRepo.findProdByPagina(idProveedor,"S", pagina); 
+			paginaProduct = productoRepo.findProdByPagina("S","S", pagina); 
 		
 			listaProduct = paginaProduct.toList();
 		
@@ -316,7 +316,7 @@ public class ProductsService {
 			precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
 			
 			// Envio al Web Service
-		    result = pricesWs.callWebService(precios, param);
+		     pricesWs.callWebService(precios, param);
 		    
 		    Thread.sleep (lotesEsperaSegundos * 1000);
 		}
@@ -328,7 +328,7 @@ public class ProductsService {
 		PricesWs pricesWs = new PricesWs();
 		
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
 		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
