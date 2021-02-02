@@ -19,4 +19,11 @@ public interface OrderRepo extends JpaRepository<Order, Long>  {
     		+ " WHERE o.snEstadoEnviado ='N'"
     		+ "   and tiOrden =?1")
 	public List<Order> findOrderByPendientes(String tiOrden);
+	
+	@Query("SELECT o FROM Order o, CuentaCliente c"
+    		+ " WHERE c.store_id_ERP = o.store_id_ERP"
+    		+ " and o.snEstadoEnviado ='N'"
+    		+ " and c.idSucursal =?1"
+    		+ " and o.tiOrden =?2")
+	public List<Order> findOrderBySucursalPendientes(long sucursal, String tiOrden);
 }

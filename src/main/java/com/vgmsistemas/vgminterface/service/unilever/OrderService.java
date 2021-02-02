@@ -9,18 +9,23 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.vgmsistemas.vgminterface.entity.Empresa;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.Proveedor;
+import com.vgmsistemas.vgminterface.entity.ProveedorSucursal;
 import com.vgmsistemas.vgminterface.entity.Sucursal;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
 import com.vgmsistemas.vgminterface.entity.unilever.Order;
 import com.vgmsistemas.vgminterface.entity.unilever.OrderItem;
 import com.vgmsistemas.vgminterface.entity.unilever.OrderItemChanged;
 import com.vgmsistemas.vgminterface.entity.unilever.Orders;
+import com.vgmsistemas.vgminterface.repository.EmpresaRepo;
 import com.vgmsistemas.vgminterface.repository.ParametroInterfaceRepo;
 import com.vgmsistemas.vgminterface.repository.ProveedorRepo;
+import com.vgmsistemas.vgminterface.repository.ProveedorSucursalRepo;
 import com.vgmsistemas.vgminterface.repository.SucursalRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.OrderRepo;
 import com.vgmsistemas.vgminterface.servicesrest.OrderWs;
@@ -39,6 +44,15 @@ public class OrderService {
 	
 	@Autowired
 	ProveedorRepo proveedorRepo;
+	
+	@Autowired
+	EmpresaRepo  empresaRepo;
+	
+	@Autowired
+	ProveedorSucursalRepo proveedorSucursalRepo;
+	
+	@Value("${sucursalDefault}")
+	long idSucursal;
 	
 	private static Logger LOG =  LoggerFactory.getLogger(OrderService.class)	;
 	
@@ -125,11 +139,24 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		Long idProveedor = param.getIdProveedor();
 		Map<String, String> items_changed;
 		
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Recupero el codigo de distribuidor
 		Optional<Proveedor> prov = proveedorRepo.findById(idProveedor);
 		
+		
+		// 1 sucursal
+				// Optional<SucursalProveedor> provSuc = sucrusalProveedorRepo.findById(id Sucursal,idProveedor);
+				// n sucursales
 		// Recupero la cuenta cliente
-		List<Order> ordenLista = orderRepo.findOrderByPendientes("DEFINITIVA");
+		List<Order> ordenLista;
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")) {
+			 ordenLista = orderRepo.findOrderBySucursalPendientes(idSucursal, "DEFINITIVA");
+		} else {
+			 ordenLista = orderRepo.findOrderByPendientes("DEFINITIVA");
+		}
+		
 		
 		for (Order ord:ordenLista) {
 			items_changed = new HashMap<String, String>();
@@ -141,14 +168,22 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 			ord.setItems_changed(items_changed);
 		}
 		
-
-
-		
 		// Creo el objeto y le asigno la lista
 		Orders ordenes = new Orders(ordenLista);
 		
 		// Seteo el código de distribuidor
 		ordenes.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				ordenes.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				ordenes.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			ordenes.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		return ordenes;
 	}
