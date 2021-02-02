@@ -29,9 +29,14 @@ public interface CuentaClienteRepo extends JpaRepository<CuentaCliente, Integer>
 	
 	@Query("SELECT c FROM CuentaCliente c"
     		+ " WHERE c.sn_enviado = 'N'"
-    		+ "   and c.Store_Status in ('2','1')"
-    		)
+    		+ "   and c.Store_Status in ('2','1')")
 	public List<CuentaCliente> findByPendientes();
+	
+	@Query("SELECT c FROM CuentaCliente c"
+    		+ " WHERE c.sn_enviado = 'N'"
+    		+ "   and c.Store_Status in ('2','1')"
+    		+ "   and c.idSucursal = ?1")
+	public List<CuentaCliente> findByPendientes(long idSucursal);
 	
 	@Query("SELECT c FROM CuentaCliente c"
     		+ " WHERE c.email = ?1")
