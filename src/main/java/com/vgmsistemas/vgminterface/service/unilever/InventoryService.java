@@ -11,15 +11,19 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.vgmsistemas.vgminterface.entity.Empresa;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.Proveedor;
+import com.vgmsistemas.vgminterface.entity.ProveedorSucursal;
 import com.vgmsistemas.vgminterface.entity.Sucursal;
 import com.vgmsistemas.vgminterface.entity.unilever.Inventories;
 import com.vgmsistemas.vgminterface.entity.unilever.Inventory;
 import com.vgmsistemas.vgminterface.entity.unilever.Views;
+import com.vgmsistemas.vgminterface.repository.EmpresaRepo;
 import com.vgmsistemas.vgminterface.repository.MarcaRepo;
 import com.vgmsistemas.vgminterface.repository.ParametroInterfaceRepo;
 import com.vgmsistemas.vgminterface.repository.ProveedorRepo;
+import com.vgmsistemas.vgminterface.repository.ProveedorSucursalRepo;
 import com.vgmsistemas.vgminterface.repository.SucursalRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.InventoryRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.ProductRepo;
@@ -48,6 +52,12 @@ public class InventoryService {
 	@Autowired
 	InventoryRepo inventoryRepo;
 	
+	@Autowired
+	EmpresaRepo empresaRepo;	
+	
+	@Autowired
+	ProveedorSucursalRepo proveedorSucursalRepo;
+	
 	@Value("${lotesEsperaSegundos}")
 	Integer lotesEsperaSegundos;
 	
@@ -66,9 +76,20 @@ public class InventoryService {
 		
 		// Sucursales
 		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
 				
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		Optional<ParametroInterface> param ;
+		
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -85,7 +106,18 @@ public class InventoryService {
 		// Actualizo los campos en null y los agrego a la lista de productos
 		Inventories stocks = new Inventories(listaInventory);
 		
-		stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				stocks.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return inventoryWs.callWebService(stocks, param);
@@ -103,7 +135,21 @@ public class InventoryService {
 		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		// Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
+		// Optengo los parametros de la interface
+		Optional<ParametroInterface> param ;
+		
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -132,7 +178,19 @@ public class InventoryService {
 			// Actualizo los campos en null y los agrego a la lista de productos
 			Inventories stocks = new Inventories(listaInventory);
 		
-			stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			//stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+				Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+				if (proveedorSucursal.isPresent()) {
+					stocks.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+				} else {
+					stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+				}
+				
+			} else {
+				stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
 		
 			// Envio al Web Service
 		    result = inventoryWs.callWebService(stocks, param);
@@ -150,7 +208,20 @@ public class InventoryService {
 		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
 				
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		// Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
+		// Optengo los parametros de la interface
+		Optional<ParametroInterface> param ;
+		
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -168,7 +239,18 @@ public class InventoryService {
 		// Actualizo los campos en null y los agrego a la lista de productos
 		Inventories stocks = new Inventories(listaInventory);
 		
-		stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				stocks.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			stocks.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return inventoryWs.callWebService(stocks, param);
