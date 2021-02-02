@@ -11,16 +11,20 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.vgmsistemas.vgminterface.entity.Empresa;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.Proveedor;
+import com.vgmsistemas.vgminterface.entity.ProveedorSucursal;
 import com.vgmsistemas.vgminterface.entity.Sucursal;
 import com.vgmsistemas.vgminterface.entity.unilever.Prices;
 import com.vgmsistemas.vgminterface.entity.unilever.Product;
 import com.vgmsistemas.vgminterface.entity.unilever.Products;
 import com.vgmsistemas.vgminterface.entity.unilever.Views;
+import com.vgmsistemas.vgminterface.repository.EmpresaRepo;
 import com.vgmsistemas.vgminterface.repository.MarcaRepo;
 import com.vgmsistemas.vgminterface.repository.ParametroInterfaceRepo;
 import com.vgmsistemas.vgminterface.repository.ProveedorRepo;
+import com.vgmsistemas.vgminterface.repository.ProveedorSucursalRepo;
 import com.vgmsistemas.vgminterface.repository.SucursalRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.PriceRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.ProductRepo;
@@ -50,8 +54,17 @@ public class ProductsService {
 	@Autowired
 	PriceRepo precioRepo;
 	
+	@Autowired
+	EmpresaRepo empresaRepo;
+	
+	@Autowired
+	ProveedorSucursalRepo proveedorSucursalRepo;
+	
 	@Value("${lotesEsperaSegundos}")
 	Integer lotesEsperaSegundos;
+	
+	@Value("${sucursalDefault}")
+	long idSucursal;
 	
 	private static Logger LOG = LoggerFactory.getLogger(ProductsService.class)	;
 	
@@ -75,11 +88,21 @@ public class ProductsService {
 		
 		ProductsWs productsWs = new ProductsWs();
 		
-		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
+		// Sucursales
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
+				
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -125,7 +148,19 @@ public class ProductsService {
 			}
 			Products productos = new Products(listaProduct);
 			
-			productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			//productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			// Optengo los parametros de la interface
+			if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+				Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+				if (proveedorSucursal.isPresent()) {
+					productos.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+				} else {
+					productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+				}
+				
+			} else {
+				productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
 			
 			// Envio al Web Service
 		    result = productsWs.callWebService(productos, param);
@@ -142,11 +177,21 @@ public class ProductsService {
 	public Integer enviar(String tiEnvio) throws Exception {
 		ProductsWs productsWs = new ProductsWs();
 		
-		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
+		// Obtengo datos de la sucursal 
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
+
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -181,7 +226,18 @@ public class ProductsService {
 		}
 		Products productos = new Products(listaProduct);
 		
-		productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				productos.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return productsWs.callWebService(productos, param);
@@ -191,11 +247,18 @@ public class ProductsService {
 	public Integer enviarEAN(String ean) throws Exception {
 		ProductsWs productsWs = new ProductsWs();
 		
-		// Sucursales
-		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+				
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -232,7 +295,19 @@ public class ProductsService {
 		}
 		Products productos = new Products(listaProduct);
 		
-		productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				productos.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			productos.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return productsWs.callWebService(productos, param);
@@ -242,11 +317,22 @@ public class ProductsService {
 	public Integer enviarPrecios(String tiEnvio) throws Exception {
 		PricesWs pricesWs = new PricesWs();
 		
-		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
+		// Obtengo datos de la Sucursal
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
+		
+		// Obtengo el proveedor desde la interface
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -269,7 +355,19 @@ public class ProductsService {
 		}*/
 		Prices precios = new Prices(listaProduct);
 		
-		precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				precios.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return pricesWs.callWebService(precios, param);
@@ -283,11 +381,21 @@ public class ProductsService {
 		
 		PricesWs pricesWs = new PricesWs();
 		
-		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1" )  ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
+		// Sucursales
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
+				
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -313,7 +421,19 @@ public class ProductsService {
 		
 			Prices precios = new Prices(listaProduct);
 			
-			precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			//precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+				Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+				if (proveedorSucursal.isPresent()) {
+					precios.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+				} else {
+					precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+				}
+				
+			} else {
+				precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
 			
 			// Envio al Web Service
 		     pricesWs.callWebService(precios, param);
@@ -327,11 +447,18 @@ public class ProductsService {
 	public Integer enviarPreciosProducto(String ean) throws Exception {
 		PricesWs pricesWs = new PricesWs();
 		
-		// Sucursales
-		//Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
-				
+		Optional<ParametroInterface> param;
+		
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		if (empresa.get().getTiImplementacionInterfaz().equals("1") ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+				
 		Long idProveedor = param.get().getIdProveedor();
 		
 		// Recupero el codigo de distribuidor
@@ -348,7 +475,18 @@ public class ProductsService {
 		
 		Prices precios = new Prices(listaProduct);
 		
-		precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
+			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
+			if (proveedorSucursal.isPresent()) {
+				precios.setDistributor_code(String.valueOf(proveedorSucursal.get().getIdClienteProv()));
+			} else {
+				precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+			}
+			
+		} else {
+			precios.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		}
 		
 		// Envio al Web Service
 	    return pricesWs.callWebService(precios, param);
