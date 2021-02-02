@@ -17,8 +17,14 @@ public class ParametroInterface implements Serializable{
 	private static final long serialVersionUID = -6096220149840555434L;
 	@Id
 	@GeneratedValue
-	@Column(name = "id_empresa")
+	@Column(name = "id_parametro_interface")
 	private long id;
+	
+	@Column(name = "id_empresa")
+	private long idEmpresa;
+	
+	@Column(name = "id_sucursal")
+	private long idSucursal;
 	
 	@Column(name = "de_url_cuentacliente_estado")
 	private String deUrlCuentaClienteEstado;
