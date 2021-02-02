@@ -6,13 +6,16 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.vgmsistemas.vgminterface.entity.CanalProvRubro;
 import com.vgmsistemas.vgminterface.entity.Cliente;
+import com.vgmsistemas.vgminterface.entity.Empresa;
 import com.vgmsistemas.vgminterface.entity.ParametroInterface;
 import com.vgmsistemas.vgminterface.entity.unilever.CuentaCliente;
 import com.vgmsistemas.vgminterface.repository.CanalProvRubroRepo;
+import com.vgmsistemas.vgminterface.repository.EmpresaRepo;
 import com.vgmsistemas.vgminterface.repository.ParametroInterfaceRepo;
 import com.vgmsistemas.vgminterface.repository.unilever.CuentaClienteRepo;
 import com.vgmsistemas.vgminterface.service.ClienteService;
@@ -34,6 +37,12 @@ public class CuentaClienteService {
 	
 	@Autowired
 	ParametroInterfaceRepo parametroInterfaceRepo;
+	
+	@Autowired
+	EmpresaRepo empresaRepo;
+	
+	@Value("${sucursalDefault}")
+	long idSucursal;
 	
 	private static Logger LOG =  LoggerFactory.getLogger(CuentaClienteService.class)	;
 	
@@ -70,11 +79,19 @@ public class CuentaClienteService {
 	
 		
 	public CuentaCliente crear(CuentaCliente ctacliente) throws Exception {
+		Optional<ParametroInterface> param;
 		String vacio= "";
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		if (empresa.get().getTiImplementacionInterfaz().equals("1") ) {	
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
+		
 		// Primero busco el cliente si existe para hacer match y asigno los campos
-		Optional<Cliente> cliente = clienteService.findCliente(ctacliente);
-		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		Optional<Cliente> cliente = clienteService.findCliente(ctacliente,empresa.get().getTiImplementacionInterfaz());
+		
 		
 		ctacliente.setSn_enviado('N');
 		ctacliente.setStore_Status(vacio);
@@ -102,6 +119,11 @@ public class CuentaClienteService {
 		}
 		// Grabo el cliente y devuelvo el resultado
 		try {
+			// Si la implementación es por sucursal se graba la sucursal por la que ingresó
+			if (empresa.get().getTiImplementacionInterfaz().equals("1") ) {	
+			   ctacliente.setIdSucursal(idSucursal);
+			}
+			
 			LOG.info("CuentaCliente.crear(). Trato de crear el Retailer. " + ctacliente.getCuit_dni_id());
 			ctacliente = cuentaClienteRepo.save(ctacliente);
 			LOG.info("CuentaCliente.crear(). Creó OK el Retailer. " + ctacliente.getCuit_dni_id());
@@ -159,15 +181,21 @@ public class CuentaClienteService {
 	
 	public CuentaCliente actualizarEnviado(CuentaCliente ctacliente) throws Exception {
 		CuentaCliente cuentaCliente;
+		cuentaCliente = cuentaClienteRepo.findCuentaByEmail(ctacliente.getEmail());
+
 		if (ctacliente.getStore_Status().equals("1") ) {
 			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con Store_id_ERP. " + ctacliente.getStore_id_ERP());
-			cuentaCliente = cuentaClienteRepo.findCuentaByStore_id_ERP(ctacliente.getStore_id_ERP());
 			cuentaCliente.setSn_enviado('S');
 			
 		} else {
-			LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con EMAIL. " + ctacliente.getEmail());
-			cuentaCliente = cuentaClienteRepo.findCuentaByEmail(ctacliente.getEmail());
-			cuentaCliente.setSn_enviado('N');
+			if (ctacliente.getStore_Status().equals(cuentaCliente.getStore_Status())) {
+				LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con EMAIL. " + ctacliente.getEmail());
+				cuentaCliente.setSn_enviado('S');
+			} else {
+				LOG.info("CuentaCliente actualizarEnviado(). Busco CuentaCliente con EMAIL. " + ctacliente.getEmail());
+				cuentaCliente.setSn_enviado('N');
+			}
+			
 		}
 		
 		// Grabo las modificaciones cliente y devuelvo el resultado
@@ -189,15 +217,25 @@ public class CuentaClienteService {
 	     return cuentaCliente;
 	}
 	
-	public Integer enviar(Integer id) throws Exception {
+	public Integer enviar(Integer id, Optional<Empresa> empresa) throws Exception {
 		CuentaClienteWs cuentaClienteWs = new CuentaClienteWs();
+		
+		Optional<ParametroInterface> param;
+		String vacio= "";
+		//Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		if (empresa.get().getTiImplementacionInterfaz().equals("1") )  {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
 				
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
-		LOG.error("CuentaClienteService enviar(). Obtengo parámetros");
-		LOG.error("enviar(). Url: " + param.get().getDeUrlCuentaClienteEstado());
-		LOG.error("enviar(). Client Id: " + param.get().getClient_id());
-		LOG.error("enviar(). Client secret: " + param.get().getClient_secret());
+		// Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		LOG.info("CuentaClienteService enviar(). Obtengo parámetros");
+		LOG.info("enviar(). Url: " + param.get().getDeUrlCuentaClienteEstado());
+		LOG.info("enviar(). Client Id: " + param.get().getClient_id());
+		LOG.info("enviar(). Client secret: " + param.get().getClient_secret());
 		
 		// Recupero la cuenta cliente
 		Optional<CuentaCliente> cuentaCliente = cuentaClienteRepo.findById(id);
@@ -208,17 +246,31 @@ public class CuentaClienteService {
 		};
 		
 		// Envio al Web Service
-		LOG.error("enviar(). Llamo metodo callWebService: CUIT " + cuentaCliente.get().getCuit_dni_id());
-	    return cuentaClienteWs.callWebService(cuentaCliente, param);
+		LOG.info("enviar(). Llamo metodo callWebService: CUIT " + cuentaCliente.get().getCuit_dni_id());
+	    return cuentaClienteWs.callWebService(cuentaCliente
+	    		, param);
+	}
+	
+	public Integer enviar(Integer id) throws Exception {
+		List<CuentaCliente> cuentasCliente;
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
+		enviar(id,empresa);
+		
+	    return 1;
 	}
 	
 	public Integer enviar() throws Exception {
-				
-		// Recupero la cuenta cliente
-		List<CuentaCliente> cuentasCliente = cuentaClienteRepo.findByPendientes();
-		
+		List<CuentaCliente> cuentasCliente;
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		if (empresa.get().getTiImplementacionInterfaz().equals("1") ) {		
+			// Recupero la cuenta cliente
+			cuentasCliente = cuentaClienteRepo.findByPendientes(idSucursal);
+		} else {
+			cuentasCliente = cuentaClienteRepo.findByPendientes();
+		}
 		for (CuentaCliente cuenta : cuentasCliente) {
-			enviar(cuenta.getId());
+			enviar(cuenta.getId(),empresa);
 		}
 		
 		

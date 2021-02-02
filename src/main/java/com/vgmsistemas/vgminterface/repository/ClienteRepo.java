@@ -41,8 +41,22 @@ public interface ClienteRepo extends JpaRepository<Cliente, PkCliente>  {
 	
 	@Query("SELECT c FROM Cliente c "
     		+ "WHERE "
+    		+ " id.idSucursal = ?1"
+    		+ " and cuit = ?2"
+    		+ " and c.deAltura= ?3"
+    		+ " and c.localidad.provincia.descripcion = ?4")
+	public Optional<Cliente> findClienteByCuit(long idSucursal, String cuit, String deAltura, String provincia);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
     		+ " cuit = ?1")
 	public List<Cliente> findClienteByCuit(String cuit);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
+    		+ " id.idSucursal =?1"
+    		+ " and cuit = ?2")
+	public List<Cliente> findClienteByCuit(long idSucursal, String cuitDni);
 	
 	@Query("SELECT c FROM Cliente c "
     		+ "WHERE "
@@ -63,4 +77,19 @@ public interface ClienteRepo extends JpaRepository<Cliente, PkCliente>  {
     		+ " and c.deAltura = ?2"
     		+ " and c.localidad.provincia.descripcion = ?3")
 	public Optional<Cliente> findClienteByDni(String dni, String deAltura, String provincia);
+	
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE id.idSucursal = ?1"
+    		+ " and idNroDoc = ?2"
+    		+ " and c.deAltura = ?3"
+    		+ " and c.localidad.provincia.descripcion = ?4")
+	public Optional<Cliente> findClienteByDni(long idSucursal,String dni, String deAltura, String provincia);
+
+	@Query("SELECT c FROM Cliente c "
+    		+ "WHERE "
+    		+ " c.id.idSucursal =?1"
+    		+ " and c.cuit = ?2")
+	public Optional<Cliente> findUnClienteByCuit(long idSucursal, String cuit);
+
+	
 }
