@@ -92,7 +92,7 @@ public class Cliente{
 	@Transient
 	private String contrasenaUltraweb="";
 	
-	@Column(name = "id_vendedor")
+	@Column(name = "id_vendedor_interface")
 	private Integer idVendedor;
 	
 	@Column(name="email")

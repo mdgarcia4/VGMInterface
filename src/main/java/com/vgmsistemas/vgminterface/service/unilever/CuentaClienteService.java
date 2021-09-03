@@ -96,7 +96,7 @@ public class CuentaClienteService {
 		ctacliente.setSn_enviado('N');
 		ctacliente.setStore_Status(vacio);
 		ctacliente.setRejection_reason(vacio);
-		if (cliente.isPresent()) {
+		if (cliente.isPresent() && cliente.get().getIdVendedor() != null) {
 			
 			// Verifico si el cliente ya esta asignado
 			if (!cuentaClienteRepo.findCuenta(cliente.get().getId().getIdSucursal(),cliente.get().getId().getIdCliente(),cliente.get().getId().getIdComercio()).isPresent() ) {
