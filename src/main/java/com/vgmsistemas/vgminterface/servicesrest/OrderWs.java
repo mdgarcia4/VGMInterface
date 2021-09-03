@@ -15,16 +15,26 @@ import com.vgmsistemas.vgminterface.entity.unilever.Views;
 
 public class OrderWs extends GenericWs {
 	private static Logger LOG =  LoggerFactory.getLogger(OrderWs.class)	;
-	public Integer callWebService(Orders orders, Optional<ParametroInterface> param) throws Exception {
+	public Integer callWebService(Orders orders, Optional<ParametroInterface> param, String tipo) throws Exception {
 		DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		DecimalFormat decimalf = new DecimalFormat("#,###,##0.00");
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setDateFormat(df);
 
 		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-	    String jsonOrders = mapper
-	      .writerWithView(Views.Orden.class)
-	      .writeValueAsString(orders);
+		
+		String jsonOrders;
+		if (tipo.equals("COMPLETO")) {
+			jsonOrders = mapper
+				      .writerWithView(Views.Orden.class)
+				      .writeValueAsString(orders);
+			 LOG.info("Json Orden COMPLETA:" + jsonOrders);
+		} else {
+			jsonOrders = mapper
+				      .writerWithView(Views.Public.class)
+				      .writeValueAsString(orders);
+			 LOG.info("Json Orden RESUMIDA:" + jsonOrders);
+		}
 		
 	
 		if (param.isPresent()) {

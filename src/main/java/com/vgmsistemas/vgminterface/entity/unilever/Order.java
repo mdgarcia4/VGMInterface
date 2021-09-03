@@ -41,7 +41,7 @@ public class Order{
 	@Column(name = "id_orden")
 	private String order_id;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@Column(name = "id_cliente_tienda")
 	private String store_id_ERP;
 		
@@ -49,7 +49,7 @@ public class Order{
 	@Column(name = "fe_orden")
 	private Date created_at;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "ca_total")
 	private Float total_qty_ordered;
@@ -66,12 +66,12 @@ public class Order{
 	@Column(name = "de_cliente_apellido")
 	private String customer_lastname;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "ca_items")
 	private Integer total_item_count;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_subtotal_sdto")
 	private Float subtotal;
@@ -81,12 +81,12 @@ public class Order{
 	@Column(name = "pr_descuento")
 	private Float discount_amount;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_total")
 	private Float grand_total;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name = "pr_subtotal_cdto")
 	private Float total_due;
@@ -125,11 +125,11 @@ public class Order{
 	@Column(name = "ti_orden")
 	private String tiOrden;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@Column(name ="ti_origen")
 	private String order_source;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@Column(name="fe_modificacion")
 	private Date updated_at;
@@ -151,7 +151,7 @@ public class Order{
 	@Column(name="sn_estado_enviado")
 	private String snEstadoEnviado;
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	@Column(name="id_orden_ERP")
 	private String erp_order_id;
 	

@@ -135,7 +135,7 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 	
 	
 	// ---- METODOS PARA ENVIAR ORDENES ACTUALIZADAS 
-	public Orders prepararOrden(ParametroInterface param) throws Exception  {
+	public Orders prepararOrden(ParametroInterface param, String tipo) throws Exception  {
 		Long idProveedor = param.getIdProveedor();
 		Map<String, String> items_changed;
 		
@@ -144,17 +144,24 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		
 		// Recupero el codigo de distribuidor
 		Optional<Proveedor> prov = proveedorRepo.findById(idProveedor);
-		
-		
+				
 		// 1 sucursal
 				// Optional<SucursalProveedor> provSuc = sucrusalProveedorRepo.findById(id Sucursal,idProveedor);
 				// n sucursales
 		// Recupero la cuenta cliente
 		List<Order> ordenLista;
 		if (empresa.get().getTiImplementacionInterfaz().equals("1")) {
-			 ordenLista = orderRepo.findOrderBySucursalPendientes(idSucursal, "DEFINITIVA");
+			if (tipo =="COMPLETO") {
+				ordenLista = orderRepo.findOrderBySucursalPendientes(idSucursal, "DEFINITIVA");
+			} else {
+				ordenLista = orderRepo.findOrderBySucursalPendientesResumido(idSucursal, "DEFINITIVA");
+			}
 		} else {
-			 ordenLista = orderRepo.findOrderByPendientes("DEFINITIVA");
+			if (tipo =="COMPLETO") {
+				ordenLista = orderRepo.findOrderByPendientes("DEFINITIVA");
+			} else {
+				ordenLista = orderRepo.findOrderByPendientesResumido("DEFINITIVA");
+			}
 		}
 		
 		
@@ -172,7 +179,7 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		Orders ordenes = new Orders(ordenLista);
 		
 		// Seteo el código de distribuidor
-		ordenes.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
+		//ordenes.setDistributor_code(String.valueOf(prov.get().getIdClienteProv()));
 		if (empresa.get().getTiImplementacionInterfaz().equals("1")  ) {
 			Optional<ProveedorSucursal> proveedorSucursal = proveedorSucursalRepo.findByIdSucursalAndIdProveedor(idSucursal, prov.get().getIdProveedor());
 			if (proveedorSucursal.isPresent()) {
@@ -189,13 +196,29 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 	}
 	
 	public Integer enviar() throws Exception {
+		return enviar("COMPLETO");
+	}
+	
+	public Integer enviar(String tipo) throws Exception {
 		OrderWs orderWs = new OrderWs();
 				
 		// Sucursales
-		Optional<Sucursal> suc = sucursalRepo.findById((long) 1);
+		Optional<Sucursal> suc = sucursalRepo.findById(idSucursal);
 				
 		// Optengo los parametros de la interface
-		Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		// Optional<ParametroInterface> param = parametroInterfaceRepo.findById((long) 1);
+		Optional<Empresa> empresa = empresaRepo.findBySnActivada("S");
+		
+		// Optengo los parametros de la interface
+		Optional<ParametroInterface> param ;
+		
+		// Optengo los parametros de la interface
+		if (empresa.get().getTiImplementacionInterfaz().equals("1")   ) {
+			param = parametroInterfaceRepo.findByIdEmpresaAndIdSucursal(empresa.get().getId(),idSucursal);
+		} else { 
+			// Optengo los parametros de la interface
+			param = parametroInterfaceRepo.findByIdEmpresa(empresa.get().getId());
+		}
 		
 		LOG.info("OrderService enviar(). Obtengo parámetros");
 		LOG.info("enviar(). Url: " + param.get().getDeUrlEstadoVentas());
@@ -203,10 +226,12 @@ public Order tratarOrden(Order ordenRecibida, String tiOrden) throws Exception {
 		LOG.info("enviar(). Client secret: " + param.get().getClient_secret());
 		
 		// Preparo la orden para enviar
-		Orders ordenes = prepararOrden( param.get());
+		Orders ordenes = prepararOrden( param.get(), tipo);
 		
 		// Envio al Web Service
 		LOG.info("enviar(). Llamo metodo callWebService con ordenes: " );
-	    return orderWs.callWebService(ordenes, param);
+		return orderWs.callWebService(ordenes, param, tipo);
+		
+	    
 	}
 }

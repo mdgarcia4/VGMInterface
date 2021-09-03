@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public class Orders {
 	
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	private String distributor_code;
 
 	@ElementCollection
-	@JsonView(Views.Orden.class)
+	@JsonView(Views.Public.class)
 	private List<Order> orders;
 
 	public Orders(List<Order> ordenLista) {

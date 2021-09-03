@@ -25,6 +25,7 @@ public class RutasServicios {
 	public static final String ENVIAR_STOCK_lOTE = BASE_WS +"/enviarStockLote";
 	public static final String ENVIAR_STOCK_PRODUCTO = BASE_WS +"/enviarStockProducto";
 	public static final String ENVIAR_PEDIDOS= BASE_WS +"/enviarPedidos";
+	public static final String ENVIAR_PEDIDOS_RESUMIDOS = BASE_WS +"/enviarPedidosResumido";
 	
 	// Respuestas de COMPRE AHORA
 	public static final String CUENTA_CLIENTE_RESPUESTA = BASE_WS + "/Retailer/acknowledgement";
@@ -36,6 +37,7 @@ public class RutasServicios {
 	// Recuperar
 	public static final String GET_PRODUCTO = BASE_WS +"/getProducto";
 	public static final String GET_PRODUCTOS = BASE_WS +"/getProductos";
+	
 	
 	
 	

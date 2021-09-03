@@ -244,12 +244,26 @@ public class InternosRestController {
 	}
 	
 	
-	@JsonView(Views.Public.class)
+	@JsonView(Views.Orden.class)
 	@RequestMapping(value = RutasServicios.ENVIAR_PEDIDOS, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Integer enviarPedidos() throws Exception {
 		try {
 			// Primero Obtengo la info
 			return orderService.enviar();
+		}
+		catch (Exception e) { 
+			LOG.error("InternosRestController enviarOrden(). Error: " + e.getMessage());
+			throw e;
+		}
+		
+	}
+	
+	@JsonView(Views.Public.class)
+	@RequestMapping(value = RutasServicios.ENVIAR_PEDIDOS_RESUMIDOS, method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Integer enviarPedidosResumido() throws Exception {
+		try {
+			// Primero Obtengo la info
+			return orderService.enviar("RESUMIDO");
 		}
 		catch (Exception e) { 
 			LOG.error("InternosRestController enviarOrden(). Error: " + e.getMessage());
