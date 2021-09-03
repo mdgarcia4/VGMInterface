@@ -26,7 +26,17 @@ public class PkPrice implements Serializable{
 	@Column(name="id_comercio")
 	private Long idComercio;
 
+	@Column(name="id_canal")
+	private String id_canal;
 	
+	public String getId_canal() {
+		return id_canal;
+	}
+
+	public void setId_canal(String id_canal) {
+		this.id_canal = id_canal;
+	}
+
 	public Long getIdArticulos() {
 		return idArticulos;
 	}
